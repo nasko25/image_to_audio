@@ -35,7 +35,7 @@ a.logo {
 }
 
 .navbar {
-	border-bottom: 1px solid gray;
+	border-bottom: 2px solid var(--primary);
 }
 
 .title {
@@ -70,3 +70,13 @@ a.logo {
 	margin-bottom: 0;
 	vertical-align:middle;
 }
+
+/* for phones */
+@media only screen and (max-width: 600px) {
+	a.logo {
+		margin: 0.2em 2em;
+	}
+}
+
+/* for tablets */
+@media only screen and (min-width: 768px) {}
