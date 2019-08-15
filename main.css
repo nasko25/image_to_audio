@@ -36,6 +36,7 @@ a.logo {
 
 .navbar {
 	border-bottom: 2px solid var(--primary);
+	background-color: #f9f9f9;
 }
 
 .title {
@@ -94,13 +95,16 @@ a.logo {
 	margin: 4em auto;
 	height: 200px;
 	position: relative;
+	background-color: #fdfdfd;
 }
 
 .box p {
 	color: grey;
+	background-color:#f9f9f9;
 	font-size: 1.5em;
 	font-weight: 500;
-	padding-top: 0.8em;
+	padding-top: 0.4em;
+	padding-bottom: 0.4em;
 }
 
 .box button {
