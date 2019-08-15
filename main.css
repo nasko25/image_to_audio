@@ -103,13 +103,6 @@ a.logo {
 	padding-top: 0.8em;
 }
 
-.box p.small-print {
-	font-size: 1em;
-	width: 200px;
-	position: absolute;
-	bottom: 1em;
-}
-
 .box button {
 	font-size: 1.7em; 
 	margin-top:0.4em;
@@ -120,16 +113,50 @@ a.logo {
 	margin-top:0.4em;
 }
 
-@media (min-width: 979px){
+@media (min-width: 920px){
+	.arrow {
+		content: url("images/arrow.png");
+	}
+	
 	.dragndrop {
 		content: url("images/dragNdrop.png");
+	}
+}
+
+@media (min-width: 979px){
+	.dragndrop {
 		width:100px;
 		height: 100px;
 		position:relative;
+		display:block;
+		margin: auto;
 	}
 	.div_dragndop {
 		position: absolute;
 		bottom: 10em;
-		left: 25em;
+		left: 20em;
+		/*width: 200px;*/
+		width: 200px;
 	}
+	
+	.small-print {
+		font-size: 1em;
+		width: 200px;
+		bottom: 1em;
+		color: grey;
+		font-weight: 500;
+	}
+	
+	.arrow {
+		width:200px;
+		height: 200px;
+		position:relative;
+		display:block;
+		margin-left: 3.5em;
+		margin-bottom:-2em;
+		-ms-transform: rotate(-30deg); /* IE 9 */
+		-webkit-transform: rotate(-30deg); /* Safari 3-8 */
+		transform: rotate(-30deg);
+	}
+
 }
