@@ -93,6 +93,7 @@ a.logo {
 	width: 500px;
 	margin: 4em auto;
 	height: 200px;
+	position: relative;
 }
 
 .box p {
@@ -102,8 +103,33 @@ a.logo {
 	padding-top: 0.8em;
 }
 
+.box p.small-print {
+	font-size: 1em;
+	width: 200px;
+	position: absolute;
+	bottom: 1em;
+}
+
 .box button {
 	font-size: 1.7em; 
 	margin-top:0.4em;
 }
 
+.box label {
+	font-size: 1.7em; 
+	margin-top:0.4em;
+}
+
+@media (min-width: 979px){
+	.dragndrop {
+		content: url("images/dragNdrop.png");
+		width:100px;
+		height: 100px;
+		position:relative;
+	}
+	.div_dragndop {
+		position: absolute;
+		bottom: 10em;
+		left: 25em;
+	}
+}
