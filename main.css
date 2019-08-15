@@ -1,0 +1,28 @@
+.slate {
+	background-color: #1b345b /*#004080*/;
+}
+
+.white-background {
+	background-color: white;	
+}
+
+.slate-dark {
+	background-color: #0a1932 /*#00264d*/;
+}
+
+.nav-item {
+	padding-left: 2em;
+}
+
+.nav-shadow-slate {
+	height:50px;
+	width: 110%;
+	margin: -50px 0px 0px -10%;
+	box-shadow: 5px 3px 6px #1b345b;
+}
+
+.body {
+	background-color: #ccd9ff;
+}
+
+/*TODO change the navbar font*/
