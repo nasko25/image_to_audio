@@ -59,6 +59,13 @@ a.logo {
 	margin-left: 0;
 }
 
+@media (min-width: 979px) {
+	.dropdown:hover > .dropdown-menu {
+		display: block;  
+		margin: 0;
+	}
+}
+
 .center-div {
 	text-align: center;
 }
@@ -99,3 +106,4 @@ a.logo {
 	font-size: 1.7em; 
 	margin-top:0.4em;
 }
+
