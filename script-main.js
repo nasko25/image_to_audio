@@ -8,7 +8,8 @@ function changeValue(e) {
 	console.log(e.parent);
 }
 
-function setDropdown() {
+function screenSizeChange() {
+	// set the dropdown attribute
 	var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
 	if (width < 979) {
 		for (i = 0; i < document.getElementsByClassName("dropdown").length; i++) {
@@ -20,10 +21,19 @@ function setDropdown() {
 			document.getElementsByClassName("dropdown")[i].childNodes[1].removeAttribute("data-toggle");
 		}
 	}
+	
+	// remove the "drag and drop" visuals
+	if (width < 960) {
+		var paragraphs = document.getElementsByClassName("small-print");
+		for (i = 0; i < paragraphs.length; i++){
+			paragraphs[i].innerHTML = "";
+			paragraphs[i].remove();
+		}
+	}
 }
 
-setDropdown();
-window.onresize = setDropdown;
+screenSizeChange();
+window.onresize = screenSizeChange;
 
 function dropHandler(ev) {
   console.log('File(s) dropped');

@@ -113,6 +113,12 @@ a.logo {
 	margin-top:0.4em;
 }
 
+@media (min-width: 950px) {
+	.box {
+		margin-bottom: 0;
+	}
+}
+
 @media (min-width: 960px){
 	.arrow {
 		content: url("images/arrow.png");
@@ -122,117 +128,6 @@ a.logo {
 		content: url("images/dragNdrop.png");
 	}
 }
-/*
-@media (min-width: 1000px) and (min-height: 667px){
-	.dragndrop {
-		width:100px;
-		height: 100px;
-		position:relative;
-		display:block;
-		margin: auto;
-	}
-	.div_dragndop {
-		position: absolute;
-		bottom: 7em;
-		left: 2em;
-		width: 200px;
-	}
-	
-	.small-print {
-		font-size: 1em;
-		width: 200px;
-		bottom: 1em;
-		color: grey;
-		font-weight: 500;
-	}
-	
-	.arrow {
-		width:200px;
-		height: 200px;
-		position:relative;
-		display:block;
-		margin-left: 3.5em;
-		margin-bottom:-2em;
-		-ms-transform: rotate(-30deg); /* IE 9 */ /*
-		-webkit-transform: rotate(-30deg); /* Safari 3-8 *//*
-		transform: rotate(-30deg);
-	}
-}
-
-@media (min-width: 1200px) and (min-height: 667px){
-	.dragndrop {
-		width:100px;
-		height: 100px;
-		position:relative;
-		display:block;
-		margin: auto;
-	}
-	.div_dragndop {
-		position: absolute;
-		bottom: 7em;
-		left: 10em;
-		width: 200px;
-	}
-	
-	.small-print {
-		font-size: 1em;
-		width: 200px;
-		bottom: 1em;
-		color: grey;
-		font-weight: 500;
-	}
-	
-	.arrow {
-		width:200px;
-		height: 200px;
-		position:relative;
-		display:block;
-		margin-left: 3.5em;
-		margin-bottom:-2em;
-		-ms-transform: rotate(-30deg); /* IE 9 *//*
-		-webkit-transform: rotate(-30deg); /* Safari 3-8 *//*
-		transform: rotate(-30deg);
-	}
-}
-
-@media (min-width: 1500px) and (min-height: 720px){
-	.dragndrop {
-		width:100px;
-		height: 100px;
-		position:relative;
-		display:block;
-		margin: auto;
-	}
-	.div_dragndop {
-		position: absolute;
-		bottom: 10em;
-		left: 20em;
-		width: 200px;
-	}
-	
-	.small-print {
-		font-size: 1em;
-		width: 200px;
-		bottom: 1em;
-		color: grey;
-		font-weight: 500;
-	}
-	
-	.arrow {
-		width:200px;
-		height: 200px;
-		position:relative;
-		display:block;
-		margin-left: 3.5em;
-		margin-bottom:-2em;
-		-ms-transform: rotate(-30deg); /* IE 9 *//*
-		-webkit-transform: rotate(-30deg); /* Safari 3-8 *//*
-		transform: rotate(-30deg);
-	}
-
-}*/
-
-
 
 /* Medium devices (desktops, 992px and up) */
 @media (min-width: 960px) { 
