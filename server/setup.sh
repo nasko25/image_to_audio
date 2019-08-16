@@ -16,3 +16,10 @@ pip install gTTS
 # gtts-cli "`tr '\n' ' ' < gatsby.txt | awk -F '   +' '{print $2}' | awk -F '  +' '{print $1 " " $2}'`" -o raven-formatted.mp3
 
 # need to write a python script that uses the wavenet voice
+
+
+# add the path to the json with the google credentions to $PATH   FOR EACH SESSION
+# export GOOGLE_APPLICATION_CREDENTIALS="/home/pi/image_to_audio/Test-1074eae5bb81.json"
+
+pip install --upgrade google-cloud-texttospeech
+# Needed to pip3 install --upgrade google-cloud-texttospeech
