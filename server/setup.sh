@@ -23,3 +23,11 @@ pip install gTTS
 
 pip install --upgrade google-cloud-texttospeech
 # Needed to pip3 install --upgrade google-cloud-texttospeech
+
+# get a page dewarper to help with the OCR
+# git clone https://github.com/mzucker/page_dewarp.git
+# need to install the required libraries for page_dewarp
+# pip install -r requirements.txt
+# since there was no version of opencv for the raspberry pi, I downloaded the code for opencv and compiled it with cmake:
+# https://docs.opencv.org/3.3.0/d7/d9f/tutorial_linux_install.html
+# TODO find a better dewarper
