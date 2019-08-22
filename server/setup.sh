@@ -30,4 +30,14 @@ pip install --upgrade google-cloud-texttospeech
 # pip install -r requirements.txt
 # since there was no version of opencv for the raspberry pi, I downloaded the code for opencv and compiled it with cmake:
 # https://docs.opencv.org/3.3.0/d7/d9f/tutorial_linux_install.html
-# TODO find a better dewarper
+# page_dewarper is good enough for now
+
+# to find dpi of an image
+# identify -format '%x,%y\n' image.jpg 
+# to change dpi of an image
+# convert -units PixelsPerInch image.jpg -density 300 image300.jpg
+# they both need
+# sudo apt-get install -y imagemagick
+
+# TODO make a script that dewarps an image, uses tesseract on it, and uses gTTS. Also, make sure the web interface tells the user to open the page as much as possible so that there is as little as possible text warping.
+# Then, connect the server and client. (after testing extensively) 

@@ -1,0 +1,49 @@
+Transitioning from IPv4 to IPv6
+
+Now that we have seen the technical details of IPv6, let us consider a very practi-
+cal matter: How will the public Internet, which is based on IPV4, be transitioned to
+IPv6? The problem is that while new IPv6-capable systems can be made backward-
+compatible, that is, can send, route, and receive IPv4 datagrams, already deployed
+IPv4-capable systems are not capable of handling IPv6 datagrams. Several options
+are possible [Huston 201 1b, RFC 4213].
+
+One option would be to declare a flag day—a given time and date when all
+Internet machines would be turned off and upgraded from IPv4 to IPv6. The last
+major technology transition (from using NCP to using TCP for reliable transport
+service) occurred almost 35 years ago. Even back then [RFC 801], when the Internet
+was tiny and still being administered by a small number of “wizards,” it was real-
+ized that such a flag day was not possible. A flag day involving billions of devices
+is even more unthinkable today.
+
+The approach to IPv4-to-IPv6 transition that has been most widely adopted in
+practice involves tunneling [RFC 4213]. The basic idea behind tunneling—a key
+concept with applications in many other scenarios beyond IPv4-to-IPv6 transition,
+including wide use in the all-IP cellular networks that we’ll cover in Chapter 7—is
+the following. Suppose two IPv6 nodes (in this example, B and E in Figure 4.27)
+want to interoperate using IPv6 datagrams but are connected to each other by inter-
+vening IPv4 routers. We refer to the intervening set of IPv4 routers between two
+IPv6 routers as a tunnel, as illustrated in Figure 4.27. With tunneling, the IPv6 node
+on the sending side of the tunnel (in this example, B) takes the entire IPv6 datagram
+and puts it in the data (payload) field of an [Pv4 datagram. This IPv4 datagram is
+then addressed to the IPv6 node on the receiving side of the tunnel (in this exam-
+ple, E) and sent to the first node in the tunnel (in this example, C). The intervening
+IPv4 routers in the tunnel route this IPv4 datagram among themselves, just as they
+would any other datagram, blissfully unaware that the IPv4 datagram itself con-
+tains a complete IPv6 datagram. The IPv6 node on the receiving side of the tunnel
+eventually receives the IPv4 datagram (it is the destination of the IPv4 datagram!),
+determines that the IPv4 datagram contains an IPv6 datagram (by observing that
+the protocol number field in the IPv4 datagram is 41 [RFC 4213], indicating that
+the IPv4 payload is a IPv6 datagram), extracts the IPv6 datagram, and then routes
+
+the IPv6 datagram exactly as it would if it had received the IPv6 datagram from a
+directly connected IPv6 neighbor.
+
+We end this section by noting that while the adoption of IPv6 was initially slow
+to take off [Lawton 2001; Huston 2008b], momentum has been building. NIST
+[NIST IPv6 2015] reports that more than a third of US government second-level
+domains are IPv6-enabled. On the client side, Google reports that only about 8 per-
+cent of the clients accessing Google services do so via IPv6 [Google IPv6 2015]. But
+
+other recent measurements [Czyz 2014] indicate that IPv6 adoption is accelerating.
+The proliferation of devices such as IP-enabled phones and other portable devices
+
