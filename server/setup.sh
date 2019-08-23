@@ -40,4 +40,6 @@ pip install --upgrade google-cloud-texttospeech
 # sudo apt-get install -y imagemagick
 
 # TODO make a script that dewarps an image, uses tesseract on it, and uses gTTS. Also, make sure the web interface tells the user to open the page as much as possible so that there is as little as possible text warping.
-# Then, connect the server and client. (after testing extensively) 
+# Then, connect the server and client. (after testing extensively)
+
+sudo pip install pytesseract 
