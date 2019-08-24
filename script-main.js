@@ -1,10 +1,14 @@
 
-function changeValue(e) {
+function changeValue(e, image_or_audio) {
 	let old_text = e.textContent;
 	let new_text = e.parentNode.parentNode.childNodes[1].textContent;
 	new_text = new_text.replace(/\s/g, '');
 	e.textContent = new_text;
 	e.parentNode.parentNode.childNodes[1].textContent = old_text + " ";
+	if (image_or_audio === "image")
+		document.getElementById("from").value = old_text;
+	else if (image_or_audio === "audio")
+		document.getElementById("to").value = old_text;
 	console.log(e.parent);
 }
 
@@ -48,7 +52,13 @@ function dropHandler(ev) {
       if (ev.dataTransfer.items[i].kind === 'file') {
         var file = ev.dataTransfer.items[i].getAsFile();
         console.log('... file[' + i + '] - ' + file.name + ' uploaded.');
-		XMLHttpRequest.send(file); 
+		// TODO DO that for multiple files as well!!!
+		var url= "upload.php";
+        var formData = new FormData();
+		formData.append("fileToUpload", file);
+		var xhr = new XMLHttpRequest();
+		xhr.open('POST', url, true);
+		xhr.send(formData);
       }
     }
   } else {

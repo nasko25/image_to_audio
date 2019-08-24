@@ -29,9 +29,9 @@
 						.png
 					</button>
 					<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-						<button class="dropdown-item" type = "button" onclick = "changeValue(this)">.jpeg</button>
-						<button class="dropdown-item" type = "button" onclick = "changeValue(this)">.gif</button>
-						<button class="dropdown-item" type = "button" onclick = "changeValue(this)">.pdf</button>
+						<button class="dropdown-item" type = "button" onclick = "changeValue(this, 'image')">.jpeg</button>
+						<button class="dropdown-item" type = "button" onclick = "changeValue(this, 'image')">.gif</button>
+						<button class="dropdown-item" type = "button" onclick = "changeValue(this, 'image')">.pdf</button>
 					</div>
 				</span> 
 				<p class = "to"> TO </p> 
@@ -40,9 +40,9 @@
 						.mp3
 					</button>
 					<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-						<button class="dropdown-item" type = "button" onclick = "changeValue(this)">.aac</button>
-						<button class="dropdown-item" type = "button" onclick = "changeValue(this)">.wav</button>
-						<button class="dropdown-item" type = "button" onclick = "changeValue(this)">.wma</button>
+						<button class="dropdown-item" type = "button" onclick = "changeValue(this, 'audio')">.aac</button>
+						<button class="dropdown-item" type = "button" onclick = "changeValue(this, 'audio')">.wav</button>
+						<button class="dropdown-item" type = "button" onclick = "changeValue(this, 'audio')">.wma</button>
 					</div>
 				</span>
 			</div>	
@@ -55,6 +55,8 @@
 						Choose a file <input type="file" name="fileToUpload" id="fileToUpload" hidden>
 					</label>
 					<br><input class="btn btn-secondary" type="submit" value="Upload" name="submit" style = "float:right; margin-right: 2em;">	
+				<input style = "display:none;" name = "from" id = "from" value = ".png">
+				<input style = "display:none;" name = "to" id = "to" value = ".mp3">
 				</form>
 
 			</div>
