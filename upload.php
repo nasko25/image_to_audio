@@ -7,6 +7,8 @@
 
 	echo $_POST["from"];
 	echo $_POST["to"];
+	error_log($_POST["from"]);
+    error_log($_POST["to"]);
 	echo $image_file_type;
 	error_log($image_file_type);
 	
@@ -23,4 +25,14 @@
                         $uploadOk = 0;
                 }
         }
+		
+	if(file_exists($file_name)) {
+            echo "File already exists. Try again later.";
+            $uploadOk = 0;
+    }
+
+    if ($_FILES["fileToUpload"]["size"] > 500000) {
+            echo "File too large.";
+            $uploadOk = 0;
+    }
 ?>
