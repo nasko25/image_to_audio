@@ -43,3 +43,5 @@ pip install --upgrade google-cloud-texttospeech
 # Then, connect the server and client. (after testing extensively)
 
 sudo pip install pytesseract 
+
+# change the default upload_file_size_limit in php.ini to at least 5M.
