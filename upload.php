@@ -35,4 +35,9 @@
             echo "File too large.";
             $uploadOk = 0;
     }
+	
+	if((".".$image_file_type) !== $_POST["from"]&&!($_POST["from"]===".jpg"&&$image_file_type==="jpeg")) {
+            echo "\nWrong file format.";
+            $uploadOk = 0;
+    }
 ?>
