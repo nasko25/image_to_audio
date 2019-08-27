@@ -48,6 +48,8 @@
             if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $file_name)) {
                 echo "File has been uploaded";
                 error_log("File ". basename($_FILES["fileToUpload"]["name"]) . " has been uploaded as ". $file_name);
+				
+				echo shell_exec(escapeshellcmd("./image_to_text.py"));
             }
             else {
 				echo "Error uploading the file";

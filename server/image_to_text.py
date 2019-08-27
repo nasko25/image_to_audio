@@ -3,6 +3,11 @@
 # 2 tesseract
 
 import pytesseract
+import sys 
+import os 
+
+print "reached python code; image file name: " , str(sys.argv)
+os.system("touch reached_python")
 
 # The script will be called whenever the user uploads an image to be conveted.
 # Firstly, it will spawn a new process/thread, which will create a random value and create a folder with a name that is the random value. If such a folder already exists, the script will save an image proccessed with page_dewarp and pytesseract there as a txt file with a random name. 
