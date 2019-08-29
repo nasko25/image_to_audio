@@ -32,3 +32,6 @@ print(pytesseract.image_to_string(Image.open("uploads/" + name + "_thresh.png"))
 # Then it will call another script, passing the name of the folder, and the file name (as a path), and will save an audio file with the random name. 
 # Then it will somehow send the audio file (either as a POST response or by email).
 # Finally, the script will delete the file, wait for a second, and delete the folder and then kill the thread.
+
+# Add an option in the website to turn on page_dewarp if the image needs it.
+# Add guide with pictures in the website to show how to take images and crop them.
