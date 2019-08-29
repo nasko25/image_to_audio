@@ -36,7 +36,7 @@
             $uploadOk = 0;
     }
 	
-	if((".".$image_file_type) !== $_POST["from"]&&!($_POST["from"]===".jpg"&&$image_file_type==="jpeg")) {
+	if((".".$image_file_type) !== $_POST["from"]&&!($_POST["from"]===".jpeg"&&$image_file_type==="jpg")) {
             echo "\nWrong file format.";
             $uploadOk = 0;
     }
