@@ -19,7 +19,12 @@ print "reached python code; image file name: " , str(sys.argv)
 # The script will be called whenever the user uploads an image to be conveted.
 # Firstly, it will spawn a new process/thread, which will create a random value and create a folder with a name that is the random value. If such a folder already exists, the script will save an image proccessed with (page_dewarp and) pytesseract there as a txt file with a random name. 
 
-print(pytesseract.image_to_string(Image.open(sys.argv[1])).encode("utf-8").replace("\n", " "))
+name = sys.argv[1].partition("/")[2].partition(".")[0]
+# print(name)
+# exit()
+os.system("python page_dewarp/page_dewarp.py " + sys.argv[1])
+os.system("mv " + name + "_thresh.png uploads/")
+print(pytesseract.image_to_string(Image.open("uploads/" + name + "_thresh.png")).encode("utf-8").replace("\n", " "))
 
 # It could also format the txt file (remove \n).
 # Maybe also remove the things from the very top and very bottom (like titles/authors and page numbers on a book) (they are usually separated by several new lines)
