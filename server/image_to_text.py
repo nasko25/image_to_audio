@@ -22,7 +22,8 @@ print "reached python code; image file name: " , str(sys.argv)
 print(pytesseract.image_to_string(Image.open(sys.argv[1])).encode("utf-8").replace("\n", " "))
 
 # It could also format the txt file (remove \n).
-# Maybe also remove the things from the very top and very bottom (like titles/authors and page numbers on a book)
+# Maybe also remove the things from the very top and very bottom (like titles/authors and page numbers on a book) (they are usually separated by several new lines)
+# Also tell the user to crop the image, so that there is only text from one page at a time; and take as good of a photo as possible.
 # Then it will call another script, passing the name of the folder, and the file name (as a path), and will save an audio file with the random name. 
 # Then it will somehow send the audio file (either as a POST response or by email).
 # Finally, the script will delete the file, wait for a second, and delete the folder and then kill the thread.
