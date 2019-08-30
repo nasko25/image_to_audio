@@ -33,6 +33,8 @@ function screenSizeChange() {
 			paragraphs[i].innerHTML = "";
 			paragraphs[i].remove();
 		}
+		document.getElementsByClassName("arrow")[0].remove();
+		document.getElementsByClassName("dragndrop")[0].remove();
 	}
 }
 

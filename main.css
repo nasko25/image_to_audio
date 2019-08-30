@@ -123,15 +123,9 @@ a.logo {
 	}
 }
 
-@media (min-width: 960px){
-	.arrow {
-		content: url("images/arrow.png");
-	}
-	
-	.dragndrop {
-		content: url("images/dragNdrop.png");
-	}
-}
+/* TODO ADD MIN-HEIGHT RESTRICTIONS !!! for the two images
+	ALSO change dragndrop and arrow to ids; not classes
+ */
 
 /* Medium devices (desktops, 992px and up) */
 @media (min-width: 960px) { 
