@@ -7,6 +7,7 @@ sudo apt-get install tesseract-ocr -y
 pip install gTTS
 # Add the path to PATH to use the command line application (gtts-cli)
 # PATH=$PATH:/home/pi/.local/bin
+export GOOGLE_APPLICATION_CREDENTIALS="/home/chrome/one/Test-1074eae5bb81.json"
 # needed to pip3 install gTTS
 # gtts-cli 'hello' --output hello.mp3
 # python -m SimpleHTTPServer    to host the mp3 file to download it
