@@ -39,4 +39,4 @@ class ConverTextToAudio: # python syntax?
             old_format = AudioSegment.from_wav(file_name + "_audio" + self.expected_output_audio_format)
             old_format.export(file_name + "_audio.flac", format = "flac") 
 
-ctta_test = ConverTextToAudio(text = "Hello. I am Special Agent Fox Mulder with the Federal Bureau of Investigation.", expected_output_audio_format = ".wav", file_name = "bbbb")
+ctta_test = ConverTextToAudio(text = "Hello. I am Special Agent Fox Mulder with the Federal Bureau of Investigation.", expected_output_audio_format = ".flac", file_name = "cccc")
