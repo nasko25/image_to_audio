@@ -46,3 +46,11 @@ pip install --upgrade google-cloud-texttospeech
 sudo pip install pytesseract 
 
 # change the default upload_file_size_limit in php.ini to at least 5M.
+
+# NOT NEEDED 
+# sudo apt-get install ffmpeg
+# sudo pip install --upgrade AudioConverter
+# I had to sudo apt-get remove python3-pip; sudo apt-get install python3-pip
+# and then do sudo pip3 install --upgrade AudioConverter
+
+sudo pip3 install pydub
