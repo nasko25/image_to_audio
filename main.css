@@ -300,3 +300,13 @@ input:checked + .slider:before {
 .article {
 	padding-top: 2em;
 }
+
+.col-8 li {
+	font-size: 1.4em;
+}
+
+.col-8 p {
+	margin-left:-40px;
+	color: grey;
+	font-weight: 500;
+}
