@@ -52,6 +52,20 @@ a.logo {
 	margin: 0.2em 5em;
 }
 
+/* a img {
+	width: 10em;
+}
+
+nav {
+	height: 78.8px;
+}*/
+
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent; /* make scrollbar transparent */
+	display:none;
+}
+
 .navbar {
 	border-bottom: 2px solid var(--primary);
 	background-color: #f9f9f9;
@@ -143,6 +157,8 @@ a.logo {
 }
 
 /* TODO ADD MIN-HEIGHT RESTRICTIONS !!! for the two images
+	make sure min-width controls the position in terms of left and right,
+	and min-height controls positions in terms of up and down.
 	ALSO change dragndrop and arrow to ids; not classes
  */
 
