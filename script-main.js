@@ -15,6 +15,8 @@ function changeValue(e, image_or_audio) {
 function screenSizeChange() {
 	// set the dropdown attribute
 	var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+	var height = (window.innerHeight > 0) ? window.innerHeight : screen.height;
+	
 	if (width < 979) {
 		for (i = 0; i < document.getElementsByClassName("dropdown").length; i++) {
 			document.getElementsByClassName("dropdown")[i].childNodes[1].setAttribute("data-toggle", "dropdown");
@@ -27,7 +29,7 @@ function screenSizeChange() {
 	}
 	
 	// remove the "drag and drop" visuals
-	if (width < 960) {
+	if (width < 960 || height < 550) {
 		var paragraphs = document.getElementsByClassName("small-print");
 		for (i = 0; i < paragraphs.length; i++){
 			paragraphs[i].innerHTML = "";

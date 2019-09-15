@@ -150,16 +150,31 @@ nav {
 	margin-top:0.4em;
 }
 
-@media (min-width: 950px) {
+@media (max-width: 750px) {
 	.box {
-		margin-bottom: 0;
+		width: 450px;
+		height: 200px;
+	}
+	.box label {
+		margin-bottom: 0.4em;
 	}
 }
 
-/* TODO ADD MIN-HEIGHT RESTRICTIONS !!! for the two images
+@media (max-width: 550px) {
+	.box {
+		width: 350px;
+		height: 250px;
+	}
+	.box label {
+		margin-bottom: 1em;
+	}
+}
+
+/*  ADDed MIN-HEIGHT RESTRICTIONS !!! for the two images
 	make sure min-width controls the position in terms of left and right,
 	and min-height controls positions in terms of up and down.
-	ALSO change dragndrop and arrow to ids; not classes
+	TODO change dragndrop and arrow to ids; not classes
+	ALSO remove unnecessary comments
  */
 
 /* Medium devices (desktops, 992px and up) */
@@ -173,7 +188,7 @@ nav {
 	}
 	.div_dragndop {
 		position: absolute;
-		bottom: 0em;
+		/* bottom: 0em;*/
 		left: 1em;
 		width: 200px;
 	}
@@ -181,7 +196,7 @@ nav {
 	.small-print {
 		font-size: 1em;
 		width: 200px;
-		bottom: 1em;
+		/*bottom: 1em;*/
 		color: grey;
 		font-weight: 500;
 	}
@@ -192,10 +207,38 @@ nav {
 		position:relative;
 		display:block;
 		margin-left: 3.5em;
-		margin-bottom:-2em;
+		/* margin-bottom:-2em;*/
 		-ms-transform: rotate(-30deg); /* IE 9 */
 		-webkit-transform: rotate(-30deg); /* Safari 3-8 */
 		transform: rotate(-30deg);
+	}
+	.box {
+		/*margin-top: 2em;*/
+		/*margin-bottom: 1em;*/
+	}
+
+}
+
+@media (max-height: 550px) { 
+
+	.box {
+		margin-top: 2em;
+	}
+
+}
+
+@media (min-height: 550px) { 
+
+	.div_dragndop {
+		bottom: 0em;
+	}
+	
+	.small-print {
+		bottom: 1em;
+	}
+	
+	.arrow {
+		margin-bottom:-2em;
 	}
 	.box {
 		margin-top: 2em;
@@ -204,10 +247,21 @@ nav {
 
 }
 
+
 /* Large devices (large desktops, 1200px and up) */
 @media (min-width: 1024px) { 
 	.div_dragndop {
 		left: 3em;
+		/*bottom: 0.3em;*/
+	}
+	.box {
+		/*margin-top: 4em;
+		margin-bottom: 2em;*/
+	}
+}
+
+@media (min-height: 700px) { 
+	.div_dragndop {
 		bottom: 0.3em;
 	}
 	.box {
@@ -216,27 +270,86 @@ nav {
 	}
 }
 
+
+
 @media (min-width: 1100px) { 
 	.div_dragndop {
 		left: 10em;
-		bottom: 1em;
+		/*bottom: 1em;*/
+	}
+}
+
+@media (min-height: 750px) { 
+	.div_dragndop {
+		bottom: 8em;
+	}
+	.box {
+		margin-top:4em;
 	}
 }
 
 @media (min-width: 1300px) { 
 	.div_dragndop {
 		left: 14em;
-		bottom: 2em;
+		/*bottom: 2em;*/
+	}
+}
+
+@media (min-height: 800px) { 
+	.div_dragndop {
+		bottom: 12em;
+	}
+}
+
+@media (min-height: 900px) { 
+	.div_dragndop {
+		bottom: 15em;
+	}
+}
+
+@media (min-height: 970px) { 
+	.div_dragndop {
+		bottom: 19em;
 	}
 }
 
 @media (min-width: 1440px) { 
 	.div_dragndop {
 		left: 21em;
-		bottom: 7em;
+		/*bottom: 7em;*/
+	}
+	.box {
+		/*margin-top: 5em;*/
+	}
+}
+
+@media (min-height: 1050px) { 
+	.div_dragndop {
+		bottom: 20em;
 	}
 	.box {
 		margin-top: 5em;
+	}
+}
+
+@media (min-width: 1660px) { 
+	.div_dragndop {
+		left: 25em;
+	}
+}
+
+@media (min-height: 1070px) { 
+	.div_dragndop {
+		bottom: 24em;
+	}
+	.box {
+		margin-top: 9em;
+	}
+}
+
+@media (min-width: 1770px) { 
+	.div_dragndop {
+		left: 29em;
 	}
 }
 
