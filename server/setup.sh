@@ -54,3 +54,6 @@ sudo pip install pytesseract
 # and then do sudo pip3 install --upgrade AudioConverter
 
 sudo pip3 install pydub
+
+# need pillow for the image processing in page_dewarp
+sudo pip install Pillow
