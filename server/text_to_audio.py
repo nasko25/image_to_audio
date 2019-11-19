@@ -20,7 +20,7 @@ class ConverTextToAudio: # python syntax?
         if expected_output_audio_format == ".mp3":
             self.audio_config = texttospeech.types.AudioConfig(
                     audio_encoding = texttospeech.enums.AudioEncoding.MP3) # This should also be the default option if none on the ifs are satisfied
-         elif expected_output_audio_format == ".wav"  or expected_output_audio_format == ".flac" or expected_output_audio_format == ".aiff":
+        elif expected_output_audio_format == ".wav"  or expected_output_audio_format == ".flac" or expected_output_audio_format == ".aiff":
             self.audio_config = texttospeech.types.AudioConfig(
                     audio_encoding = texttospeech.enums.AudioEncoding.LINEAR16)
 
@@ -38,5 +38,8 @@ class ConverTextToAudio: # python syntax?
         if expected_output_audio_format == ".flac":
             old_format = AudioSegment.from_wav(file_name + "_audio" + self.expected_output_audio_format)
             old_format.export(file_name + "_audio.flac", format = "flac") 
+        elif expected_output_audio_format == ".aiff":
+            old_format = AudioSegment.from_wav(file_name + "_audio" + self.expected_output_audio_format)
+            old_format.export(file_name + "_audio.aiff", format = "aiff") 
 
-ctta_test = ConverTextToAudio(text = "Hello. I am Special Agent Fox Mulder with the Federal Bureau of Investigation.", expected_output_audio_format = ".flac", file_name = "cccc")
+ctta_test = ConverTextToAudio(text = "Hello || This is |||| a test ... 1234!.", expected_output_audio_format = ".flac", file_name = "cccc")
