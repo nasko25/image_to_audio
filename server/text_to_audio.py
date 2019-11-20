@@ -17,23 +17,23 @@ class ConverTextToAudio: # python syntax?
                 name = "en-US-Wavenet-B", # or other?
                 ssml_gender=texttospeech.enums.SsmlVoiceGender.MALE) # maybe ask the user?
 
-        if expected_output_audio_format == ".mp3":
-            self.audio_config = texttospeech.types.AudioConfig(
-                    audio_encoding = texttospeech.enums.AudioEncoding.MP3) # This should also be the default option if none on the ifs are satisfied
-        elif expected_output_audio_format == ".wav"  or expected_output_audio_format == ".flac" or expected_output_audio_format == ".aiff":
+        if expected_output_audio_format == ".wav"  or expected_output_audio_format == ".flac" or expected_output_audio_format == ".aiff":
             self.audio_config = texttospeech.types.AudioConfig(
                     audio_encoding = texttospeech.enums.AudioEncoding.LINEAR16)
-
+        else: # expected_output_audio_format == ".mp3 or other
+            self.audio_config = texttospeech.types.AudioConfig(
+                    audio_encoding = texttospeech.enums.AudioEncoding.MP3) # This should also be the default option if none on the ifs are satisfied
+  
         response = self.client.synthesize_speech(self.user_input, self.voice_preferences, self.audio_config)
 
-        if expected_output_audio_format != ".mp3" and expected_output_audio_format != ".wav" and expected_output_audio_format != ".flac" and expected_output_audio_format != ".aiff" and expected_output_audio_format != ".m4a": 
+        if expected_output_audio_format == ".mp3" or expected_output_audio_format != ".wav" and expected_output_audio_format != ".flac" and expected_output_audio_format != ".aiff" and expected_output_audio_format != ".m4a": 
             self.expected_output_audio_format = ".mp3"
         else:
             self.expected_output_audio_format = ".wav"
         
         with open((file_name + "_audio" + self.expected_output_audio_format), "wb") as out:
             out.write(response.audio_content)
-            print("Audio content written to ", file_name, "_audio", self.expected_output_audio_format)
+            print("Audio content written to ", file_name, "_audio", self.expected_output_audio_format, sep="")
 
         if expected_output_audio_format == ".flac":
             old_format = AudioSegment.from_wav(file_name + "_audio" + self.expected_output_audio_format)
