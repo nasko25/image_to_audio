@@ -57,3 +57,6 @@ sudo pip3 install pydub
 
 # need pillow for the image processing in page_dewarp
 sudo pip install Pillow
+
+# needed for audio conversions
+sudo apt-get install ffmpeg

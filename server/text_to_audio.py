@@ -1,8 +1,9 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3.7
 
 from google.cloud import texttospeech
 from pydub import AudioSegment
 import sys
+import subprocess
 
 # TODO Set the enviroment variable to the path to the .json with the credentials
     # ...
@@ -17,7 +18,7 @@ class ConverTextToAudio: # python syntax?
                 name = "en-US-Wavenet-B", # or other?
                 ssml_gender=texttospeech.enums.SsmlVoiceGender.MALE) # maybe ask the user?
 
-        if expected_output_audio_format == ".wav"  or expected_output_audio_format == ".flac" or expected_output_audio_format == ".aiff":
+        if expected_output_audio_format == ".wav"  or expected_output_audio_format == ".flac" or expected_output_audio_format == ".aiff" or expected_output_audio_format == ".m4a":
             self.audio_config = texttospeech.types.AudioConfig(
                     audio_encoding = texttospeech.enums.AudioEncoding.LINEAR16)
         else: # expected_output_audio_format == ".mp3 or other
@@ -35,11 +36,14 @@ class ConverTextToAudio: # python syntax?
             out.write(response.audio_content)
             print("Audio content written to ", file_name, "_audio", self.expected_output_audio_format, sep="")
 
-        if expected_output_audio_format == ".flac":
+        if expected_output_audio_format == ".flac" or expected_output_audio_format == ".aiff":
             old_format = AudioSegment.from_wav(file_name + "_audio" + self.expected_output_audio_format)
-            old_format.export(file_name + "_audio.flac", format = "flac") 
-        elif expected_output_audio_format == ".aiff":
-            old_format = AudioSegment.from_wav(file_name + "_audio" + self.expected_output_audio_format)
-            old_format.export(file_name + "_audio.aiff", format = "aiff") 
+            old_format.export(file_name + "_audio" + expected_output_audio_format, format = expected_output_audio_format[1:])
+            # remove the wav file 
+            subprocess.run(["rm", file_name + "_audio" + self.expected_output_audio_format])
+            
+        elif expected_output_audio_format == ".m4a":
+            subprocess.run(["ffmpeg", "-i", file_name + "_audio" + self.expected_output_audio_format, "-c:a", "aac", "-b:a", "128k", file_name + "_audio" + expected_output_audio_format])
+            subprocess.run(["rm", file_name + "_audio" + self.expected_output_audio_format])
 
 ctta_test = ConverTextToAudio(text = "Hello || This is |||| a test ... 1234!.", expected_output_audio_format = ".flac", file_name = "cccc")
