@@ -43,7 +43,9 @@ class ConverTextToAudio: # python syntax?
             subprocess.run(["rm", file_name + "_audio" + self.expected_output_audio_format])
             
         elif expected_output_audio_format == ".m4a":
-            subprocess.run(["ffmpeg", "-i", file_name + "_audio" + self.expected_output_audio_format, "-c:a", "aac", "-b:a", "128k", file_name + "_audio" + expected_output_audio_format])
+            p = subprocess.Popen(["ffmpeg", "-i", file_name + "_audio" + self.expected_output_audio_format, "-c:a", "aac", "-b:a", "128k", file_name + "_audio" + expected_output_audio_format], stdout=subprocess.DEVNULL, stdin=subprocess.PIPE, stderr=subprocess.DEVNULL)
+            p.communicate('y'.encode())   # it may ask to override the file
+            p.wait()    # wait for it to finish
             subprocess.run(["rm", file_name + "_audio" + self.expected_output_audio_format])
-
+            
 ctta_test = ConverTextToAudio(text = "Hello || This is |||| a test ... 1234!.", expected_output_audio_format = ".flac", file_name = "cccc")
