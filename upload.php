@@ -1,7 +1,7 @@
 <?php
-	
+
 	$image_file_type = strtolower(pathinfo(basename($_FILES["fileToUpload"]["name"]),PATHINFO_EXTENSION));
-	$dir = "uploads/";
+	$dir = "server/uploads/";
 	$file_name = $dir . substr("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", mt_rand(0, 51), 1).substr(md5(time()), 1) . "." . $image_file_type;
 	$uploadOk = 1;
 
@@ -11,7 +11,7 @@
     error_log($_POST["to"]);
 	echo $image_file_type;
 	error_log(".".$image_file_type);
-	
+
 	 if(isset($_POST["submit"])||(isset($_FILES["fileToUpload"]))) {
                 // check if an image
                 $check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
@@ -25,22 +25,22 @@
                         $uploadOk = 0;
                 }
         }
-		
+
 	if(file_exists($file_name)) {
             echo "File already exists. Try again later.";
             $uploadOk = 0;
     }
 
-    if ($_FILES["fileToUpload"]["size"] > 500000) {
+    if ($_FILES["fileToUpload"]["size"] > 5000000) {
             echo "File too large.";
             $uploadOk = 0;
     }
-	
+
 	if((".".$image_file_type) !== $_POST["from"]&&!($_POST["from"]===".jpeg"&&$image_file_type==="jpg")) {
             echo "\nWrong file format.";
             $uploadOk = 0;
     }
-	
+
 	if ($uploadOk === 0) {
 		echo "File was not uploaded.";
 	}
@@ -48,7 +48,7 @@
             if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $file_name)) {
                 echo "File has been uploaded";
                 error_log("File ". basename($_FILES["fileToUpload"]["name"]) . " has been uploaded as ". $file_name);
-				
+
 				echo shell_exec(escapeshellcmd("./image_to_text.py " . $file_name));
             }
             else {

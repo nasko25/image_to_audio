@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2.7
 ######################################################################
 # page_dewarp.py - Proof-of-concept of page-dewarping based on a
 # "cubic sheet" model. Requires OpenCV (version 3 or greater),
