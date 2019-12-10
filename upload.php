@@ -49,7 +49,7 @@
                 echo "File has been uploaded";
                 error_log("File ". basename($_FILES["fileToUpload"]["name"]) . " has been uploaded as ". $file_name);
 
-				echo shell_exec(escapeshellcmd("./image_to_text.py " . $file_name));
+								echo shell_exec(escapeshellcmd("server/image_to_text.py " . $file_name));
             }
             else {
 				echo "Error uploading the file";

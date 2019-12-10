@@ -1,16 +1,16 @@
 <!doctype html>
-
+<!-- TODO add a dark mode -->
 <html lang="en">
-	<head> 
+	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-		
+
 		<title>Image to Audio</title>
 		<meta name="description" content="Image to Audio converter">
 
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 		<link rel="stylesheet" href="main.css">
-		
+
 		<link rel="icon" type="image/png" href="images/logo.png">
 	</head>
 	<body> <!-- #00264d  #004080-->
@@ -20,6 +20,11 @@
 				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
 				</button>
+				<label class="switch switch_dm">
+					<input type="checkbox" id = "dark_mode" onclick="on_dark_mode()">
+					<span class="slider"></span>
+				</label>
+				<p class = "checkbox_text checkbox_text_dm"> dark mode </p>
 				<a href = "description.html" id = "desc" class = "ml-auto"> Description </a>
 			</nav>
 		</header>
@@ -36,8 +41,8 @@
 						<button class="dropdown-item" type = "button" onclick = "changeValue(this, 'image')">.gif</button>
 						<button class="dropdown-item" type = "button" onclick = "changeValue(this, 'image')">.pdf</button>
 					</div>
-				</span> 
-				<p class = "to"> TO </p> 
+				</span>
+				<p class = "to"> TO </p>
 				<span class="dropdown right">
 					<button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" aria-haspopup="true" aria-expanded="false">
 						.mp3
@@ -50,16 +55,16 @@
 						<button class="dropdown-item" type = "button" onclick = "changeValue(this, 'audio')">.m4a</button>
 					</div>
 				</span>
-			</div>	
-			
-			<div class = "box center-div" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);"> 
+			</div>
+
+			<div class = "box center-div" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
 				<p> Upload a file </p>
 				<!-- TODO change the primary color -->
 				<form action="upload.php" method="post" enctype="multipart/form-data">
 					<label type = "button" class="btn btn-primary btn-lg">
 						Choose a file <input type="file" name="fileToUpload" id="fileToUpload" hidden>
 					</label>
-					<br><input class="btn btn-secondary" type="submit" value="Upload" name="submit" style = "float:right; margin-right: 2em;">	
+					<br><input class="btn btn-secondary" type="submit" value="Upload" name="submit" style = "float:right; margin-right: 2em;">
 					<input style = "display:none;" name = "from" id = "from" value = ".png">
 					<input style = "display:none;" name = "to" id = "to" value = ".mp3">
 					<label class="switch">
@@ -70,6 +75,9 @@
 				</form>
 
 			</div>
+			<div class = "center-div">
+				<p class = "message"> Note that you can drag and drop multiple files at once. </p>
+			</div>
 			<div class = "div_dragndop">
 				<img class = "arrow" src = "images/arrow.png"/>
 				<img class = "dragndrop" src = "images/dragNdrop.png"/>
@@ -77,11 +85,12 @@
 			</div>
 
 		</div>
-	
+
 		<script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 		<script src = "script-main.js"></script>
+		<script src = "dark_mode.js"></script>
 	</body>
 
 </html>
