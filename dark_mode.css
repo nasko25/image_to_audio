@@ -1,5 +1,57 @@
 /* @import "main.css" */
 
 body {
-  background-color: pink;
+  background-color: #181a1b;
 }
+
+{
+  background-color: #1a1c1d;
+}
+
+.box {
+  background-color: #191a1b;
+  border-color: #4c4c4c;
+}
+
+.navbar, .box p {
+  background-color: #1a1c1d;
+}
+
+.navbar {
+  border-bottom-color: #0062cc;
+	box-shadow: 0 1px 4px #0063cf;
+}
+
+.checkbox_text {
+  background-color: #191a1b !important;
+}
+
+.checkbox_text_dm {
+  background-color: inherit !important;
+  color: #bab5ab;
+}
+
+a.logo {
+  color: #e8e6e3;
+}
+
+#desc {
+  color: #bab5ab;
+}
+
+.slider {
+  background-color: #27292b;
+}
+
+.slider:before {
+  background-color: #181a1b;
+}
+
+input:checked + .slider {
+  background-color: #0062cc;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #0062cc;
+}
+/* TODO text and buttons */
