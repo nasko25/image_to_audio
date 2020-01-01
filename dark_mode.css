@@ -3,10 +3,9 @@
 body {
   background-color: #181a1b;
 }
-
-{
+/* {
   background-color: #1a1c1d;
-}
+} */
 
 .box {
   background-color: #191a1b;
@@ -22,8 +21,13 @@ body {
 	box-shadow: 0 1px 4px #0063cf;
 }
 
+.box p {
+  color: #b4b0a6;
+}
+
 .checkbox_text {
   background-color: #191a1b !important;
+  color: #bab5ab !important;
 }
 
 .checkbox_text_dm {
@@ -35,7 +39,7 @@ a.logo {
   color: #e8e6e3;
 }
 
-#desc {
+#desc,.small-print {
   color: #bab5ab;
 }
 
@@ -55,3 +59,31 @@ input:focus + .slider {
   box-shadow: 0 0 1px #0062cc;
 }
 /* TODO text and buttons */
+
+.title, .center, .to {
+  color: #dad7d2;
+}
+
+.btn-secondary {
+  background-color: #3f4346;
+  border-color: #4b5156;
+}
+
+.btn-primary {
+  background-color: #0062cc;
+  border-color: #0062cc;
+}
+
+.btn-primary:hover {
+  background-color: #00336b;
+  border-color: #00336b;
+}
+
+.dropdown-menu {
+  background-color: #181a1b;
+  border-color: #232526;
+}
+
+.dropdown-item {
+  color: #dad7d2;
+}
