@@ -61,7 +61,7 @@ function dropHandler(ev) {
 		// TODO DO that for multiple files as well!!!
 				var url= "upload.php";
         var formData = new FormData();
-				formData.append("fileToUpload", file);
+				formData.append("fileToUpload[]", file);
 				formData.append("from", document.getElementById("from").value);
         formData.append("to", document.getElementById("to").value);
 				var xhr = new XMLHttpRequest();

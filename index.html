@@ -10,6 +10,7 @@
 
 		<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 		<link rel="stylesheet" href="main.css">
+		<link rel="stylesheet" id = "dark_mode_link" href="dark_mode.css">
 
 		<link rel="icon" type="image/png" href="images/logo.png">
 	</head>
@@ -21,7 +22,7 @@
 					<span class="navbar-toggler-icon"></span>
 				</button>
 				<label class="switch switch_dm">
-					<input type="checkbox" id = "dark_mode" onclick="on_dark_mode()">
+					<input type="checkbox" id = "dark_mode" onclick="on_dark_mode()" checked>
 					<span class="slider"></span>
 				</label>
 				<p class = "checkbox_text checkbox_text_dm"> dark mode </p>
@@ -62,7 +63,7 @@
 				<!-- TODO change the primary color -->
 				<form action="upload.php" method="post" enctype="multipart/form-data">
 					<label type = "button" class="btn btn-primary btn-lg">
-						Choose a file <input type="file" name="fileToUpload" id="fileToUpload" hidden>
+						Choose a file <input type="file" name="fileToUpload[]" id="fileToUpload" hidden multiple>
 					</label>
 					<br><input class="btn btn-secondary" type="submit" value="Upload" name="submit" style = "float:right; margin-right: 2em;">
 					<input style = "display:none;" name = "from" id = "from" value = ".png">
