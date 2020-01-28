@@ -15,6 +15,7 @@
 	// error_log(print_r($_POST, TRUE));
 
 	$use_pd = FALSE;
+	$text_to_convert = "";
 
 	if (isset($_POST["checkbox"]) && $_POST["checkbox"] === "on") {
 		error_log("pd must be on");
@@ -46,7 +47,7 @@
 		  $uploadOk = 0;
 	  }
 
-	  if ($_FILES["fileToUpload"][$i]["size"] > 5000000) {
+	  if ($_FILES["fileToUpload"]["size"][$i] > 5000000) {
 		  echo "File too large.";
 		  $uploadOk = 0;
 	  }
@@ -63,12 +64,13 @@
 	    if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"][$i], $file_name)) {
 	        echo "File has been uploaded";
 	        error_log("File ". basename($_FILES["fileToUpload"]["name"][$i]) . " has been uploaded as ". $file_name);
-
-					echo shell_exec(escapeshellcmd("server/image_to_text.py " . $file_name));
+					// combine all the text from all photos
+					$text_to_convert .= shell_exec(escapeshellcmd("server/image_to_text.py " . $file_name));
 	    }
 	    else {
 					echo "Error uploading the file";
 	    }
 		}
 }
+			echo "<br><br>" . $text_to_convert;
 ?>
