@@ -12,6 +12,16 @@
 	// echo $image_file_type;
 	// error_log(".".$image_file_type);
 
+	// error_log(print_r($_POST, TRUE));
+
+	$use_pd = FALSE;
+
+	if (isset($_POST["checkbox"]) && $_POST["checkbox"] === "on") {
+		error_log("pd must be on");
+		$use_pd = TRUE;
+		error_log($use_pd);
+	}
+
 	for( $i=0 ; $i < $total ; $i++ ) {
 		$image_file_type = strtolower(pathinfo(basename($_FILES["fileToUpload"]["name"][$i]),PATHINFO_EXTENSION));
 		$file_name = $dir . substr("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", mt_rand(0, 51), 1).substr(md5(time()), 1) . "." . $image_file_type;
