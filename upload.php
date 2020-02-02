@@ -65,7 +65,10 @@
 	        echo "File has been uploaded";
 	        error_log("File ". basename($_FILES["fileToUpload"]["name"][$i]) . " has been uploaded as ". $file_name);
 					// combine all the text from all photos
-					$text_to_convert .= shell_exec(escapeshellcmd("server/image_to_text.py " . $file_name));
+					if (!$use_pd)
+						$text_to_convert .= shell_exec(escapeshellcmd("server/image_to_text.py " . $file_name));
+					else
+						$text_to_convert .= shell_exec(escapeshellcmd("server/image_to_text.py " . $file_name . " pd"));
 	    }
 	    else {
 					echo "Error uploading the file";
