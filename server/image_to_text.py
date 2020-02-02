@@ -22,10 +22,13 @@ print("reached python code; image file name: " , str(sys.argv))
 name = sys.argv[1].partition("/")[2].partition("/")[2].partition(".")[0]
 # print(name)
 # exit()
+
+# TODO change os.system with subsystem
+# https://stackoverflow.com/a/5597017
 if len(sys.argv) >=3 and sys.argv[2] == "pd":
-    os.system("python2.7 server/libraries/page_dewarp/page_dewarp.py " + sys.argv[1])
+    os.system("python2.7 server/libraries/page_dewarp/page_dewarp.py " + sys.argv[1] + " > /dev/null 2>&1")
     os.system("mv " + name + "_thresh.png server/uploads/")
-    #print(pytesseract.image_to_string(Image.open("server/uploads/" + name + "_thresh.png")).replace("\n", " "))
+    print(pytesseract.image_to_string(Image.open("server/uploads/" + name + "_thresh.png")).replace("\n", " "))
 else:
     print(pytesseract.image_to_string(Image.open(sys.argv[1])).replace("\n", " "))
 

@@ -61,7 +61,7 @@
 			<div class = "box center-div" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
 				<p> Upload a file </p>
 				<!-- TODO change the primary color -->
-				<!-- TODO add a message/counter for selected files -->
+				<!-- TODO add a message/counter for selected files (document.getElementById("fileToUpload").onchange)-->
 				<form action="upload.php" method="post" enctype="multipart/form-data">
 					<label type = "button" class="btn btn-primary btn-lg">
 						Choose a file <input type="file" name="fileToUpload[]" id="fileToUpload" hidden multiple>
