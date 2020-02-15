@@ -15,7 +15,7 @@ import sys
 import os
 
 # sys.stdout = open('reached_python.txt', 'a')
-print("reached python code; image file name: " , str(sys.argv))
+# print("reached python code; image file name: " , str(sys.argv))
 # os.system("touch reached_python")
 
 # The script will be called whenever the user uploads an image to be conveted.

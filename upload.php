@@ -8,7 +8,7 @@
 	echo $_POST["from"];
 	echo $_POST["to"];
 	error_log($_POST["from"]);
-  error_log($_POST["to"]);
+  	error_log($_POST["to"]);
 	// echo $image_file_type;
 	// error_log(".".$image_file_type);
 
@@ -75,5 +75,8 @@
 	    }
 		}
 }
-			echo "<br><br>" . $text_to_convert;
+
+		$text_to_convert = $_POST["to"] . " " . $file_name . "\n\n" . $text_to_convert;
+		file_put_contents($file_name . ".txt", $text_to_convert);
+		echo "<br><br>" . $text_to_convert;
 ?>
