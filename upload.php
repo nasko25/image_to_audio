@@ -76,7 +76,10 @@
 		}
 }
 
-		$text_to_convert = $_POST["to"] . " " . $file_name . "\n\n" . $text_to_convert;
+		# $text_to_convert = $_POST["to"] . " " . $file_name . "\n\n" . $text_to_convert;
+		$text_to_convert = $text_to_convert;
+
 		file_put_contents($file_name . ".txt", $text_to_convert);
-		echo "<br><br>" . $text_to_convert;
+		echo "<br><br>"; //. $text_to_convert;
+		echo shell_exec(escapeshellcmd("server/text_to_audio.py " . $_POST["to"] . " " . $file_name . ".txt"));
 ?>

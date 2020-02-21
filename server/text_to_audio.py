@@ -1,12 +1,11 @@
-#! /usr/bin/env python3.7
+#! /usr/bin/env python
 
 from google.cloud import texttospeech
 from pydub import AudioSegment
 import sys
 import subprocess
+import os
 
-# TODO Set the enviroment variable to the path to the .json with the credentials
-    # ...
 class ConverTextToAudio: # python syntax?
     def __init__(self, text, expected_output_audio_format, file_name):
         self.client = texttospeech.TextToSpeechClient()
@@ -24,29 +23,36 @@ class ConverTextToAudio: # python syntax?
         else: # expected_output_audio_format == ".mp3 or other
             self.audio_config = texttospeech.types.AudioConfig(
                     audio_encoding = texttospeech.enums.AudioEncoding.MP3) # This should also be the default option if none on the ifs are satisfied
-  
+
         response = self.client.synthesize_speech(self.user_input, self.voice_preferences, self.audio_config)
 
-        if expected_output_audio_format == ".mp3" or expected_output_audio_format != ".wav" and expected_output_audio_format != ".flac" and expected_output_audio_format != ".aiff" and expected_output_audio_format != ".m4a": 
+        if expected_output_audio_format == ".mp3" or expected_output_audio_format != ".wav" and expected_output_audio_format != ".flac" and expected_output_audio_format != ".aiff" and expected_output_audio_format != ".m4a":
             self.expected_output_audio_format = ".mp3"
         else:
             self.expected_output_audio_format = ".wav"
-        
+
         with open((file_name + "_audio" + self.expected_output_audio_format), "wb") as out:
             out.write(response.audio_content)
             print("Audio content written to ", file_name, "_audio", self.expected_output_audio_format, sep="")
 
         if expected_output_audio_format == ".flac" or expected_output_audio_format == ".aiff":
-            old_format = AudioSegment.from_wav(file_name + "_audio" + self.expected_output_audio_format)
+            old_format = AudsplitioSegment.from_wav(file_name + "_audio" + self.expected_output_audio_format)
             old_format.export(file_name + "_audio" + expected_output_audio_format, format = expected_output_audio_format[1:])
-            # remove the wav file 
+            # remove the wav file
             subprocess.run(["rm", file_name + "_audio" + self.expected_output_audio_format])
-            
+
         elif expected_output_audio_format == ".m4a":
             p = subprocess.Popen(["ffmpeg", "-i", file_name + "_audio" + self.expected_output_audio_format, "-c:a", "aac", "-b:a", "128k", file_name + "_audio" + expected_output_audio_format], stdout=subprocess.DEVNULL, stdin=subprocess.PIPE, stderr=subprocess.DEVNULL)
             p.communicate('y'.encode())   # it may ask to override the file
             p.wait()    # wait for it to finish
             subprocess.run(["rm", file_name + "_audio" + self.expected_output_audio_format])
-            
+
 # ctta_test = ConverTextToAudio(text = "Hello || This is |||| a test ... 1234!.", expected_output_audio_format = ".flac", file_name = "cccc")
-ConverTextToAudio(text = "get from a file", expected_output_audio_format = "at the beginning of the file", file_name = "at the beginning of the file")
+# ConverTextToAudio(text = "get from a file", expected_output_audio_format = "at the beginning of the file", file_name = "at the beginning of the file")
+
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="/home/nasko/Desktop/Projects/Test-1074eae5bb81.json"
+
+with open(sys.argv[2], 'r') as f:
+    ConverTextToAudio(text = f.read(), expected_output_audio_format = sys.argv[1], file_name = sys.argv[2].split(".")[0])
+
+# TODO remove images after making the txt file. And add script to delete files after 24 hours.
