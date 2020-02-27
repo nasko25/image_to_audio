@@ -81,5 +81,17 @@
 
 		file_put_contents($file_name . ".txt", $text_to_convert);
 		echo "<br><br>"; //. $text_to_convert;
-		echo shell_exec(escapeshellcmd("server/text_to_audio.py " . $_POST["to"] . " " . $file_name . ".txt"));
+
+		$uri = shell_exec(escapeshellcmd("server/text_to_audio.py " . $_POST["to"] . " " . $file_name . ".txt"));
+
+		header("Location: /" . $uri);
+		exit();
+
+		// TODO ?
+		// also check if it works:
+		// and fix file_name (it has .jpg)
+		// header("Content-disposition: attachment;filename=$file_name" . "txt");
+  	// readfile($uri);
+
+		// TODO add some kind of a loader?
 ?>
