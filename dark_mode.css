@@ -87,3 +87,11 @@ input:focus + .slider {
 .dropdown-item {
   color: #dad7d2;
 }
+
+.col-8 {
+  color:gray;
+}
+
+.col-8 p {
+  color: #dad7d2;
+}
