@@ -84,3 +84,9 @@ function dragOverHandler(ev) {
   // Prevent default behavior (Prevent file from being opened)
   ev.preventDefault();
 }
+
+// loader animation
+function load_anim() {
+  document.getElementsByClassName("container")[0].style.display = "none";
+  document.getElementById("loader_backgrd").style.display = "inline";
+}

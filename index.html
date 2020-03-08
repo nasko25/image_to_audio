@@ -66,7 +66,7 @@
 					<label type = "button" class="btn btn-primary btn-lg">
 						Choose a file <input type="file" name="fileToUpload[]" id="fileToUpload" hidden multiple>
 					</label>
-					<br><input class="btn btn-secondary" type="submit" value="Upload" name="submit" style = "float:right; margin-right: 2em;">
+					<br><input class="btn btn-secondary" type="submit" value="Upload" name="submit" style = "float:right; margin-right: 2em;" onclick="load_anim()">
 					<input style = "display:none;" name = "from" id = "from" value = ".png">
 					<input style = "display:none;" name = "to" id = "to" value = ".mp3">
 					<label class="switch">
@@ -86,6 +86,17 @@
 				<p class = "small-print center-div"> ( or drag and drop )</p>
 			</div>
 
+		</div>
+
+		<div id = "loader_backgrd">
+			<div id = "loader">
+				<div class="lds-ring">
+					<div></div>
+					<div></div>
+					<div></div>
+					<div></div>
+				</div>
+			</div>
 		</div>
 
 		<script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
