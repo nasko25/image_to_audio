@@ -89,4 +89,30 @@ function dragOverHandler(ev) {
 function load_anim() {
   document.getElementsByClassName("container")[0].style.display = "none";
   document.getElementById("loader_backgrd").style.display = "inline";
+
+	document.cookie="loaded=false; max-age=1";
+	var interval = setInterval(()=>{
+		if (getCookie("loaded")) {
+			document.getElementById("loader_backgrd").style.display = "none";
+			document.getElementsByClassName("container")[0].style.display = "inline";
+			document.cookie="loaded=false; max-age=1";
+			clearInterval(interval);
+		}
+	}, 2000);
+}
+
+
+function getCookie(cname) {
+  var name = cname + "=";
+  var ca = document.cookie.split(';');
+  for(var i = 0; i < ca.length; i++) {
+    var c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
 }

@@ -48,7 +48,7 @@ class ConverTextToAudio: # python syntax?
             subprocess.run(["rm", file_name + "_audio" + self.expected_output_audio_format])
 
 
-        print(file_name + "_audio" + expected_output_audio_format)
+        print(file_name + "_audio" + expected_output_audio_format, end = "")
 
 # ctta_test = ConverTextToAudio(text = "Hello || This is |||| a test ... 1234!.", expected_output_audio_format = ".flac", file_name = "cccc")
 # ConverTextToAudio(text = "get from a file", expected_output_audio_format = "at the beginning of the file", file_name = "at the beginning of the file")
