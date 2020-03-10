@@ -91,7 +91,16 @@
 		$file_name = explode("/", $file_name)[2];
 		header("Set-Cookie: loaded=true; Max-Age=15");
 		// TODO do the same about the other 3 possible audio formats
-		header("Content-Type: audio/mpeg");
+		if ($_POST["to"] === ".flac")
+			header("Content-Type: audio/flac");
+		else if ($_POST["to"] === ".wav")
+			header("Content-Type: audio/wav");
+		else if ($_POST["to"] === ".aiff")
+			header("Content-Type: audio/aiff");
+		else if ($_POST["to"] === ".m4a")
+			header("Content-Type: audio/m4a");
+		else
+			header("Content-Type: audio/mpeg");
 		header("Content-disposition: attachment;filename=" . $file_name . $_POST["to"]);
 		error_log($uri);
 		readfile($uri);
@@ -100,12 +109,4 @@
 
 		// header("Location: /" . $uri);
 		exit();
-
-		// TODO ?
-		// also check if it works:
-		// and fix file_name (it has .jpg)
-		// header("Content-disposition: attachment;filename=$file_name" . "txt");
-  	// readfile($uri);
-
-		// TODO add some kind of a loader?
 ?>

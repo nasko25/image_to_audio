@@ -17,7 +17,7 @@
 	<body> <!-- #00264d  #004080-->
 		<header>
 			<nav class="navbar navbar-expand navbar-light">
-				<a class="logo" href="#">LOGO </a>
+				<a class="logo" href="#"> I2A </a>
 				<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
 					<span class="navbar-toggler-icon"></span>
 				</button>
@@ -64,7 +64,7 @@
 				<!-- TODO add a message/counter for selected files (document.getElementById("fileToUpload").onchange)-->
 				<form action="upload.php" method="post" enctype="multipart/form-data">
 					<label type = "button" class="btn btn-primary btn-lg">
-						Choose a file <input type="file" name="fileToUpload[]" id="fileToUpload" hidden multiple>
+						Choose file(s) <input type="file" name="fileToUpload[]" id="fileToUpload" hidden multiple>
 					</label>
 					<br><input class="btn btn-secondary" type="submit" value="Upload" name="submit" style = "float:right; margin-right: 2em;" onclick="load_anim()">
 					<input style = "display:none;" name = "from" id = "from" value = ".png">
