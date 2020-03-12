@@ -60,3 +60,5 @@ sudo pip install Pillow
 
 # needed for audio conversions
 sudo apt-get install ffmpeg
+
+apt update && apt install -y libsm6 libxext6 libxrender-dev
