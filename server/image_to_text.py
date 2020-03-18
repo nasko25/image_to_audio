@@ -29,9 +29,9 @@ if len(sys.argv) >=3 and sys.argv[2] == "pd":
     check_call(["python2.7", "server/libraries/page_dewarp/page_dewarp.py", sys.argv[1]], stdout=DEVNULL, stderr=STDOUT)
     check_call(["mv", name + "_thresh.png", "server/uploads/"])
 
-    print(pytesseract.image_to_string(Image.open("server/uploads/" + name + "_thresh.png")).replace("\n", " "))
+    print(pytesseract.image_to_string(Image.open("server/uploads/" + name + "_thresh.png")).replace("-\n", "").replace("\n", " "))
 else:
-    print(pytesseract.image_to_string(Image.open(sys.argv[1])).replace("\n", " "))
+    print(pytesseract.image_to_string(Image.open(sys.argv[1])).replace("-\n", "").replace("\n", " "))
 
 
 # It could also format the txt file (remove \n).
