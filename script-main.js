@@ -101,9 +101,9 @@ function dropHandler(ev) {
         document.body.appendChild(a);
         a.click();
 	    }
-  	}
-		xhr.responseType = 'blob';
-		xhr.send(formData);
+    }
+    xhr.responseType = 'blob';
+    xhr.send(formData);
   }
 	// TODO older browsers?
 	// else {
