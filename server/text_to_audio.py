@@ -53,7 +53,7 @@ class ConverTextToAudio: # python syntax?
 # ctta_test = ConverTextToAudio(text = "Hello || This is |||| a test ... 1234!.", expected_output_audio_format = ".flac", file_name = "cccc")
 # ConverTextToAudio(text = "get from a file", expected_output_audio_format = "at the beginning of the file", file_name = "at the beginning of the file")
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="/home/nasko/Desktop/Projects/Test-1074eae5bb81.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="/path/to/google_credentials.json"
 
 with open(sys.argv[2], 'r') as f:
     ConverTextToAudio(text = f.read(), expected_output_audio_format = sys.argv[1], file_name = sys.argv[2].split(".")[0])
