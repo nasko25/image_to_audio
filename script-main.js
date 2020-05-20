@@ -48,34 +48,71 @@ window.onresize = screenSizeChange;
 function dropHandler(ev) {
   console.log('File(s) dropped');
 
+  // start the loading animation
+  load_anim();
+
   // Prevent default behavior (Prevent file from being opened)
   ev.preventDefault();
 
   if (ev.dataTransfer.items) {
+    var xhr = new XMLHttpRequest();
+    var formData = new FormData();
     // Use DataTransferItemList interface to access the file(s)
     for (var i = 0; i < ev.dataTransfer.items.length; i++) {
       // If dropped items aren't files, reject them
       if (ev.dataTransfer.items[i].kind === 'file') {
         var file = ev.dataTransfer.items[i].getAsFile();
         console.log('... file[' + i + '] - ' + file.name + ' uploaded.');
-		// TODO DO that for multiple files as well!!!
-				var url= "upload.php";
-        var formData = new FormData();
-				formData.append("fileToUpload[]", file);
-				formData.append("from", document.getElementById("from").value);
+
+        formData.append("fileToUpload[]", file);
+        formData.append("from", document.getElementById("from").value);
         formData.append("to", document.getElementById("to").value);
-				var xhr = new XMLHttpRequest();
-				xhr.open('POST', url, true);
-				xhr.send(formData);
       }
     }
-  } else {
-    // Use DataTransfer interface to access the file(s)
-    for (var i = 0; i < ev.dataTransfer.files.length; i++) {
-      console.log('... file[' + i + '] - ' + ev.dataTransfer.files[i].name + ' uploaded.');
-	  	XMLHttpRequest.send(ev.dataTransfer.files[i]);
-    }
+
+    var url= "upload.php";
+    xhr.open('POST', url, true);
+
+    // when the file is received callback
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+
+        // to stop the animation
+        document.cookie="loaded=true; SameSite=Lax";
+
+        // get the filename of the received file
+        var disposition = xhr.getResponseHeader('Content-Disposition');
+        if (disposition && disposition.indexOf('attachment') !== -1) {
+            var filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
+            var matches = filenameRegex.exec(disposition);
+            if (matches != null && matches[1]) {
+                var filename = matches[1].replace(/['"]/g, '');
+            }
+        } else {
+            return;
+        }
+
+        // this allows me to ask the user if they want to download the audio file
+        a = document.createElement('a');
+        a.href = window.URL.createObjectURL(xhr.response);
+
+        a.download = filename || "unsuccessful";
+        a.style.display = 'none';
+        document.body.appendChild(a);
+        a.click();
+	    }
+  	}
+		xhr.responseType = 'blob';
+		xhr.send(formData);
   }
+	// TODO older browsers?
+	// else {
+  //   // Use DataTransfer interface to access the file(s)
+  //   for (var i = 0; i < ev.dataTransfer.files.length; i++) {
+  //     console.log('... file[' + i + '] - ' + ev.dataTransfer.files[i].name + ' uploaded.');
+	//   	XMLHttpRequest.send(ev.dataTransfer.files[i]);
+  //   }
+  // }
 }
 // https://www.w3schools.com/php/php_file_upload.asp
 function dragOverHandler(ev) {
@@ -90,12 +127,12 @@ function load_anim() {
   document.getElementsByClassName("container")[0].style.display = "none";
   document.getElementById("loader_backgrd").style.display = "inline";
 
-	document.cookie="loaded=false; max-age=1";
+	document.cookie="loaded=false; max-age=1; SameSite=Lax";
 	var interval = setInterval(()=>{
 		if (getCookie("loaded")) {
 			document.getElementById("loader_backgrd").style.display = "none";
 			document.getElementsByClassName("container")[0].style.display = "inline";
-			document.cookie="loaded=false; max-age=1";
+			document.cookie="loaded=false; max-age=1; SameSite=Lax";
 			clearInterval(interval);
 		}
 	}, 2000);
