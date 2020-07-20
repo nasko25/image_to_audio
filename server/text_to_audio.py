@@ -6,6 +6,7 @@ import sys
 import subprocess
 import os
 
+# TODO: maybe use an open source project instead of googleTTS; https://github.com/mozilla/TTS
 class ConverTextToAudio: # python syntax?
     def __init__(self, text, expected_output_audio_format, file_name):
         self.client = texttospeech.TextToSpeechClient()
