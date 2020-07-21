@@ -1,13 +1,26 @@
 #! /usr/bin/env python
 
-from google.cloud import texttospeech
-from pydub import AudioSegment
+# from google.cloud import texttospeech
+# from pydub import AudioSegment
 import sys
 import subprocess
 import os
 
+import torch
+import time
+
+from TTS.utils.generic_utils import setup_model
+from TTS.utils.io import load_config
+from TTS.utils.text.symbols import symbols, phonemes
+from TTS.utils.audio import AudioProcessor
+from TTS.utils.synthesis import synthesis
+
+from TTS.vocoder.utils.generic_utils import setup_generator
+
+from scipy.io import wavfile
+
 # TODO: maybe use an open source project instead of googleTTS; https://github.com/mozilla/TTS
-class ConvertTextToAudio:
+class ConvertTextToAudioGoogleTTS:
     def __init__(self, text, expected_output_audio_format, file_name):
         self.client = texttospeech.TextToSpeechClient()
 
@@ -51,12 +64,95 @@ class ConvertTextToAudio:
 
         print(file_name + "_audio" + expected_output_audio_format, end = "")
 
-# ctta_test = ConvertTextToAudio(text = "Hello || This is |||| a test ... 1234!.", expected_output_audio_format = ".flac", file_name = "cccc")
-# ConvertTextToAudio(text = "get from a file", expected_output_audio_format = "at the beginning of the file", file_name = "at the beginning of the file")
+class ConvertTextToAudioMozillaTTS:
+    def __init__(self, text, expected_output_audio_format, file_name):
+        # runtime settings
+        use_cuda = False
 
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="/path/to/google_credentials.json"
+        # model paths
+        TTS_MODEL = "./tts_model.pth.tar"
+        TTS_CONFIG = "./config.json"
+        VOCODER_MODEL = "./vocoder_model.pth.tar"
+        VOCODER_CONFIG = "./config_vocoder.json"
 
-with open(sys.argv[2], 'r') as f:
-    ConvertTextToAudio(text = f.read(), expected_output_audio_format = sys.argv[1], file_name = sys.argv[2].split(".")[0])
+        # load configs
+        TTS_CONFIG = load_config(TTS_CONFIG)
+        VOCODER_CONFIG = load_config(VOCODER_CONFIG)
+
+        # load the audio processor
+        ap = AudioProcessor(**TTS_CONFIG.audio)
+
+        # LOAD TTS MODEL
+        # multi speaker
+        self.speaker_id = None
+        self.speakers = []
+
+        # load the model
+        num_chars = len(phonemes) if TTS_CONFIG.use_phonemes else len(symbols)
+        model = setup_model(num_chars, len(self.speakers), TTS_CONFIG)
+
+        # load model state
+        cp =  torch.load(TTS_MODEL, map_location=torch.device('cpu'))
+
+        # load the model
+        model.load_state_dict(cp['model'])
+        if use_cuda:
+            model.cuda()
+        model.eval()
+
+        # set model stepsize
+        if 'r' in cp:
+            model.decoder.set_r(cp['r'])
+
+        # LOAD VOCODER MODEL
+        self.vocoder_model = setup_generator(VOCODER_CONFIG)
+        self.vocoder_model.load_state_dict(torch.load(VOCODER_MODEL, map_location="cpu")["model"])
+        self.vocoder_model.remove_weight_norm()
+        self.vocoder_model.inference_padding = 0
+
+        ap_vocoder = AudioProcessor(**VOCODER_CONFIG['audio'])
+        if use_cuda:
+            self.vocoder_model.cuda()
+        self.vocoder_model.eval()
+
+        # TODO: get sentence from arguments
+        # TODO: all file formats
+        sentence =  "This is a test sentence. I will copy some text to check the generated speech.\nSmile spoke total few great had never their too. Amongst moments do in arrived at my replied."
+        align, spec, stop_tokens, wav = self.tts(model, sentence, TTS_CONFIG, use_cuda, ap, use_gl=False, figures=True)
+
+        # TODO: filename
+                                    # TODO: magic value, get from the config file
+        wavfile.write("example.wav", 22050, wav)
+        print(type(wav))
+
+    def tts(self, model, text, CONFIG, use_cuda, ap, use_gl, figures=True):
+        t_1 = time.time()
+        waveform, alignment, mel_spec, mel_postnet_spec, stop_tokens, inputs = synthesis(model, text, CONFIG, use_cuda, ap, self.speaker_id, style_wav=None,
+                                                                                truncated=False, enable_eos_bos_chars=CONFIG.enable_eos_bos_chars)
+        # mel_postnet_spec = ap._denormalize(mel_postnet_spec.T)
+        if not use_gl:
+            waveform = self.vocoder_model.inference(torch.FloatTensor(mel_postnet_spec.T).unsqueeze(0))
+            waveform = waveform.flatten()
+        if use_cuda:
+            waveform = waveform.cpu()
+        waveform = waveform.numpy()
+        rtf = (time.time() - t_1) / (len(waveform) / ap.sample_rate)
+        tps = (time.time() - t_1) / len(waveform)
+        print(waveform.shape)
+        print(" > Run-time: {}".format(time.time() - t_1))
+        print(" > Real-time factor: {}".format(rtf))
+        print(" > Time per step: {}".format(tps))
+
+        return alignment, mel_postnet_spec, stop_tokens, waveform
+
+# ctta_test = ConvertTextToAudioGoogleTTS(text = "Hello || This is |||| a test ... 1234!.", expected_output_audio_format = ".flac", file_name = "cccc")
+# ConvertTextToAudioGoogleTTS(text = "get from a file", expected_output_audio_format = "at the beginning of the file", file_name = "at the beginning of the file")
+
+# os.environ["GOOGLE_APPLICATION_CREDENTIALS"]="/path/to/google_credentials.json"
+
+# with open(sys.argv[2], 'r') as f:
+#     ConvertTextToAudioGoogleTTS(text = f.read(), expected_output_audio_format = sys.argv[1], file_name = sys.argv[2].split(".")[0])
+
+ConvertTextToAudioMozillaTTS(text="", expected_output_audio_format = "", file_name = "")
 
 # TODO remove images after making the txt file. And add script to delete files after 24 hours.
