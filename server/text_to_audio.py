@@ -34,7 +34,7 @@ class ConvertTextToAudioGoogleTTS:
         if expected_output_audio_format == ".wav"  or expected_output_audio_format == ".flac" or expected_output_audio_format == ".aiff" or expected_output_audio_format == ".m4a":
             self.audio_config = texttospeech.types.AudioConfig(
                     audio_encoding = texttospeech.enums.AudioEncoding.LINEAR16)
-        else: # expected_output_audio_format == ".mp3 or other
+        else: # expected_output_audio_format == ".mp3" or other
             self.audio_config = texttospeech.types.AudioConfig(
                     audio_encoding = texttospeech.enums.AudioEncoding.MP3) # This should also be the default option if none on the ifs are satisfied
 
@@ -115,12 +115,23 @@ class ConvertTextToAudioMozillaTTS:
             self.vocoder_model.cuda()
         self.vocoder_model.eval()
 
-        # TODO: all file formats
+        # TODO: need to train a model
         align, spec, stop_tokens, wav = self.tts(model, text, TTS_CONFIG, use_cuda, ap, use_gl=False, figures=True)
 
-        # TODO: filename
-        wavfile.write("example.wav", TTS_CONFIG.audio["sample_rate"], wav)
-        print(type(wav))
+        wavfile.write(file_name + "_audio.wav", TTS_CONFIG.audio["sample_rate"], wav)
+
+        # if it is any of the other supported audio formats
+        if expected_output_audio_format == ".flac" or expected_output_audio_format == ".aiff" or expected_output_audio_format == ".mp3":
+            old_format = AudioSegment.from_wav(file_name + "_audio.wav")
+            old_format.export(file_name + "_audio" + expected_output_audio_format, format = expected_output_audio_format[1:])
+            # remove the wav file
+            subprocess.run(["rm", file_name + "_audio.wav"])
+
+        elif expected_output_audio_format == ".m4a":
+            p = subprocess.Popen(["ffmpeg", "-i", file_name + "_audio.wav", "-c:a", "aac", "-b:a", "128k", file_name + "_audio" + expected_output_audio_format], stdout=subprocess.DEVNULL, stdin=subprocess.PIPE, stderr=subprocess.DEVNULL)
+            p.communicate('y'.encode())   # it may ask to override the file
+            p.wait()    # wait for it to finish
+            subprocess.run(["rm", file_name + "_audio.wav"])
 
     def tts(self, model, text, CONFIG, use_cuda, ap, use_gl, figures=True):
         t_1 = time.time()
@@ -151,6 +162,5 @@ class ConvertTextToAudioMozillaTTS:
 #     ConvertTextToAudioGoogleTTS(text = f.read(), expected_output_audio_format = sys.argv[1], file_name = sys.argv[2].split(".")[0])
 
 ConvertTextToAudioMozillaTTS(text= "This is a test sentence. I will copy some text to check the generated speech.\nSmile spoke total few great had never their too. Amongst moments do in arrived at my replied.",
-                                expected_output_audio_format = "", file_name = "")
+                                expected_output_audio_format = ".m4a", file_name = "asdfasdf")
 
-# TODO remove images after making the txt file. And add script to delete files after 24 hours.
