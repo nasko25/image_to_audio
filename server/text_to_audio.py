@@ -115,14 +115,11 @@ class ConvertTextToAudioMozillaTTS:
             self.vocoder_model.cuda()
         self.vocoder_model.eval()
 
-        # TODO: get sentence from arguments
         # TODO: all file formats
-        sentence =  "This is a test sentence. I will copy some text to check the generated speech.\nSmile spoke total few great had never their too. Amongst moments do in arrived at my replied."
-        align, spec, stop_tokens, wav = self.tts(model, sentence, TTS_CONFIG, use_cuda, ap, use_gl=False, figures=True)
+        align, spec, stop_tokens, wav = self.tts(model, text, TTS_CONFIG, use_cuda, ap, use_gl=False, figures=True)
 
         # TODO: filename
-                                    # TODO: magic value, get from the config file
-        wavfile.write("example.wav", 22050, wav)
+        wavfile.write("example.wav", TTS_CONFIG.audio["sample_rate"], wav)
         print(type(wav))
 
     def tts(self, model, text, CONFIG, use_cuda, ap, use_gl, figures=True):
@@ -153,6 +150,7 @@ class ConvertTextToAudioMozillaTTS:
 # with open(sys.argv[2], 'r') as f:
 #     ConvertTextToAudioGoogleTTS(text = f.read(), expected_output_audio_format = sys.argv[1], file_name = sys.argv[2].split(".")[0])
 
-ConvertTextToAudioMozillaTTS(text="", expected_output_audio_format = "", file_name = "")
+ConvertTextToAudioMozillaTTS(text= "This is a test sentence. I will copy some text to check the generated speech.\nSmile spoke total few great had never their too. Amongst moments do in arrived at my replied.",
+                                expected_output_audio_format = "", file_name = "")
 
 # TODO remove images after making the txt file. And add script to delete files after 24 hours.
