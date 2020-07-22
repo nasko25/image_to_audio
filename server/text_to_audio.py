@@ -120,6 +120,7 @@ class ConvertTextToAudioMozillaTTS:
 
         wavfile.write(file_name + "_audio.wav", TTS_CONFIG.audio["sample_rate"], wav)
 
+        output_audio_format = expected_output_audio_format
         # if it is any of the other supported audio formats
         if expected_output_audio_format == ".flac" or expected_output_audio_format == ".aiff" or expected_output_audio_format == ".mp3":
             old_format = AudioSegment.from_wav(file_name + "_audio.wav")
@@ -132,6 +133,12 @@ class ConvertTextToAudioMozillaTTS:
             p.communicate('y'.encode())   # it may ask to override the file
             p.wait()    # wait for it to finish
             subprocess.run(["rm", file_name + "_audio.wav"])
+        
+        # otherwise the extention is not valid/or is .wav, so .wav is used as default
+        else:
+            output_audio_format = ".wav"
+
+        print(file_name + "_audio" + output_audio_format, end = "")
 
     def tts(self, model, text, CONFIG, use_cuda, ap, use_gl, figures=True):
         t_1 = time.time()
@@ -146,6 +153,7 @@ class ConvertTextToAudioMozillaTTS:
         waveform = waveform.numpy()
         rtf = (time.time() - t_1) / (len(waveform) / ap.sample_rate)
         tps = (time.time() - t_1) / len(waveform)
+        # TODO comment out debugging prints
         print(waveform.shape)
         print(" > Run-time: {}".format(time.time() - t_1))
         print(" > Real-time factor: {}".format(rtf))
@@ -161,6 +169,7 @@ class ConvertTextToAudioMozillaTTS:
 # with open(sys.argv[2], 'r') as f:
 #     ConvertTextToAudioGoogleTTS(text = f.read(), expected_output_audio_format = sys.argv[1], file_name = sys.argv[2].split(".")[0])
 
+# TODO read from file
 ConvertTextToAudioMozillaTTS(text= "This is a test sentence. I will copy some text to check the generated speech.\nSmile spoke total few great had never their too. Amongst moments do in arrived at my replied.",
                                 expected_output_audio_format = ".m4a", file_name = "asdfasdf")
 
