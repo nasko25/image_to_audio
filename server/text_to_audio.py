@@ -1,7 +1,7 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 
 # from google.cloud import texttospeech
-# from pydub import AudioSegment
+from pydub import AudioSegment
 import sys
 import subprocess
 import os
@@ -50,7 +50,7 @@ class ConvertTextToAudioGoogleTTS:
             # print("Audio content written to ", file_name, "_audio", self.expected_output_audio_format, sep="")
 
         if expected_output_audio_format == ".flac" or expected_output_audio_format == ".aiff":
-            old_format = AudsplitioSegment.from_wav(file_name + "_audio" + self.expected_output_audio_format)
+            old_format = AudioSegment.from_wav(file_name + "_audio" + self.expected_output_audio_format)
             old_format.export(file_name + "_audio" + expected_output_audio_format, format = expected_output_audio_format[1:])
             # remove the wav file
             subprocess.run(["rm", file_name + "_audio" + self.expected_output_audio_format])
@@ -70,10 +70,10 @@ class ConvertTextToAudioMozillaTTS:
         use_cuda = False
 
         # model paths
-        TTS_MODEL = "./tts_model.pth.tar"
-        TTS_CONFIG = "./config.json"
-        VOCODER_MODEL = "./vocoder_model.pth.tar"
-        VOCODER_CONFIG = "./config_vocoder.json"
+        TTS_MODEL = "/path/to/tts_model.pth.tar"
+        TTS_CONFIG = "config/config.json"
+        VOCODER_MODEL = "/path/to/vocoder_model.pth.tar"
+        VOCODER_CONFIG = "config/config_vocoder.json"
 
         # load configs
         TTS_CONFIG = load_config(TTS_CONFIG)
