@@ -71,6 +71,7 @@ class ConvertTextToAudioGoogleTTS:
 # CITATION: https://github.com/mozilla/TTS/blob/72a6ac54c8cfaa407fc64b660248c6a788bdd381/TTS/server/synthesizer.py
 class ConvertTextToAudioMozillaTTS:
     # TODO comments
+    # TODO remove all prints except the name of the file
     def __init__(self, text, expected_output_audio_format, file_name):
         self.seg = pysbd.Segmenter(language="en", clean=True)
         # runtime settings
@@ -154,6 +155,7 @@ class ConvertTextToAudioMozillaTTS:
             p = subprocess.Popen(["ffmpeg", "-i", file_name + "_audio.wav", "-c:a", "aac", "-b:a", "128k", file_name + "_audio" + expected_output_audio_format], stdout=subprocess.DEVNULL, stdin=subprocess.PIPE, stderr=subprocess.DEVNULL)
             p.communicate('y'.encode())   # it may ask to override the file
             p.wait()    # wait for it to finish
+            # TODO uncomment:
             # subprocess.run(["rm", file_name + "_audio.wav"])
         
         # otherwise the extention is not valid/or is .wav, so .wav is used as default
@@ -182,6 +184,7 @@ class ConvertTextToAudioMozillaTTS:
             inputs = inputs.unsqueeze(0)
             print(sen, "\n\n")
             # synthesize voice
+            # FIXME when a sentence ends with !. this fails:        add a try-catch
             _, postnet_output, _, _ = run_model_torch(model, inputs, CONFIG, False, self.speaker_id, None)
             if self.vocoder_model:
                 # use native vocoder model
