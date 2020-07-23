@@ -185,7 +185,12 @@ class ConvertTextToAudioMozillaTTS:
             print(sen, "\n\n")
             # synthesize voice
             # FIXME when a sentence ends with !. this fails:        add a try-catch
-            _, postnet_output, _, _ = run_model_torch(model, inputs, CONFIG, False, self.speaker_id, None)
+            try:
+                _, postnet_output, _, _ = run_model_torch(model, inputs, CONFIG, False, self.speaker_id, None)
+            except:
+                # TODO remove print
+                print("ERROR")
+                continue
             if self.vocoder_model:
                 # use native vocoder model
                 vocoder_input = postnet_output[0].transpose(0, 1).unsqueeze(0)
@@ -249,7 +254,7 @@ class ConvertTextToAudioMozillaTTS:
 #     ConvertTextToAudioGoogleTTS(text = f.read(), expected_output_audio_format = sys.argv[1], file_name = sys.argv[2].split(".")[0])
 
 # TODO read from file
-test = "Once more unto the breach, dear friends, once more, Or close the wall up with our English dead! In peace there's nothing so becomes a man As modest stillness and humility, But when the blast of war blows in our ears, Then imitate the action of the tiger: Stiffen the sinews, summon up the blood, Disguise fair nature with hard-favored rage; Then lend the eye a terrible aspect: Let it pry through the portage of the head Like the brass cannon; let the brow o'erwhelm it As fearfully as doth a gallèd rock O'erhang and jutty his confounded base, Swilled with the wild and wasteful ocean. Now set the teeth and stretch the nostril wide, Hold hard the breath and bend up every spirit To his full height! On, on, you noble English, Whose blood is fet from fathers of war-proof, Fathers that like so many Alexanders Have in these parts from morn till even fought And sheathed their swords for lack of argument. Dishonor not your mothers; now attest That those whom you called fathers did beget you! Be copy now to men of grosser blood And teach them how to war! And you, good yeomen, Whose limbs were made in England, show us here The mettle of your pasture. Let us swear That you are worth your breeding; which I doubt not, For there is none of you so mean and base That hath not noble lustre in your eyes. I see you stand like greyhounds in the slips, Straining upon the start. The game's afoot! Follow your spirit; and upon this charge Cry 'God for Harry! England and Saint George!!"
+test = "Test!."
 ConvertTextToAudioMozillaTTS(text= test,
                                 expected_output_audio_format = ".m4a", file_name = "asdfasdf")
 print(test)
