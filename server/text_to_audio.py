@@ -85,7 +85,7 @@ class ConvertTextToAudioMozillaTTS:
 
         # load configs
         TTS_CONFIG = load_config(TTS_CONFIG)
-        # VOCODER_CONFIG = load_config(VOCODER_CONFIG)
+        VOCODER_CONFIG = load_config(VOCODER_CONFIG)
 
         # load the audio processor
         ap = AudioProcessor(**TTS_CONFIG.audio)
@@ -125,18 +125,16 @@ class ConvertTextToAudioMozillaTTS:
         if 'r' in cp:
             model.decoder.set_r(cp['r'])
 
-        # TODO vocoder
         # # LOAD VOCODER MODEL
-        self.vocoder_model = False
-        # self.vocoder_model = setup_generator(VOCODER_CONFIG)
-        # self.vocoder_model.load_state_dict(torch.load(VOCODER_MODEL, map_location="cpu")["model"])
-        # self.vocoder_model.remove_weight_norm()
-        # self.vocoder_model.inference_padding = 0
+        self.vocoder_model = setup_generator(VOCODER_CONFIG)
+        self.vocoder_model.load_state_dict(torch.load(VOCODER_MODEL, map_location="cpu")["model"])
+        self.vocoder_model.remove_weight_norm()
+        self.vocoder_model.inference_padding = 0
 
-        # # ap_vocoder = AudioProcessor(**VOCODER_CONFIG['audio'])
-        # if use_cuda:
-        #     self.vocoder_model.cuda()
-        # self.vocoder_model.eval()
+        # ap_vocoder = AudioProcessor(**VOCODER_CONFIG['audio'])
+        if use_cuda:
+            self.vocoder_model.cuda()
+        self.vocoder_model.eval()
 
         # TODO: need to train a model?
         wav = self.tts(model, text, TTS_CONFIG, use_cuda, ap, use_gl=False, figures=True)
@@ -164,6 +162,7 @@ class ConvertTextToAudioMozillaTTS:
 
         print(file_name + "_audio" + output_audio_format, end = "")
 
+    # TODO could be better (!. or !!. at the end of sentence breaks the method)
     def split_into_sentences(self, text):
         return self.seg.segment(text)
 
@@ -254,7 +253,9 @@ class ConvertTextToAudioMozillaTTS:
 #     ConvertTextToAudioGoogleTTS(text = f.read(), expected_output_audio_format = sys.argv[1], file_name = sys.argv[2].split(".")[0])
 
 # TODO read from file
-test = "Test!."
+test = """ 
+Once more unto the breach, dear friends, once more, Or close the wall up with our English dead! In peace there's nothing so becomes a man As modest stillness and humility, But when the blast of war blows in our ears, Then imitate the action of the tiger: Stiffen the sinews, summon up the blood, Disguise fair nature with hard-favored rage; Then lend the eye a terrible aspect: Let it pry through the portage of the head Like the brass cannon; let the brow o'erwhelm it As fearfully as doth a gallèd rock O'erhang and jutty his confounded base, Swilled with the wild and wasteful ocean. Now set the teeth and stretch the nostril wide, Hold hard the breath and bend up every spirit To his full height! On, on, you noble English, Whose blood is fet from fathers of war-proof, Fathers that like so many Alexanders Have in these parts from morn till even fought And sheathed their swords for lack of argument. Dishonor not your mothers; now attest That those whom you called fathers did beget you! Be copy now to men of grosser blood And teach them how to war! And you, good yeomen, Whose limbs were made in England, show us here The mettle of your pasture. Let us swear That you are worth your breeding; which I doubt not, For there is none of you so mean and base That hath not noble lustre in your eyes. I see you stand like greyhounds in the slips, Straining upon the start. The game's afoot! Follow your spirit; and upon this charge Cry 'God for Harry! England and Saint George!.
+"""
 ConvertTextToAudioMozillaTTS(text= test,
                                 expected_output_audio_format = ".m4a", file_name = "asdfasdf")
 print(test)
