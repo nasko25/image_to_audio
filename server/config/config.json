@@ -6,7 +6,7 @@
     // AUDIO PARAMETERS
     "audio":{
         // stft parameters
-        "num_freq": 1024,         // number of stft frequency levels. Size of the linear spectogram frame.
+        "fft_size": 1024,         // number of stft frequency levels. Size of the linear spectogram frame.
         "win_length": 1024,      // stft window length in ms.
         "hop_length": 256,       // stft window hop-lengh in ms.
         "frame_length_ms": null, // stft window length in ms.If null, 'win_length' is used.
@@ -36,8 +36,8 @@
         "min_level_db": -100,   // lower bound for normalization
         "symmetric_norm": true, // move normalization to range [-1, 1]
         "max_norm": 4.0,        // scale normalization to range [-max_norm, max_norm] or [0, max_norm]
-        "clip_norm": true    // clip normalized values into the range.
-        // DO NOT USE WITH MULTI_SPEAKER MODEL. scaler stats file computed by 'compute_statistics.py'. If it is defined, mean-std based notmalization is used and other normalization params are ignored
+        "clip_norm": true,      // clip normalized values into the range.
+        "stats_path": "config/scale_stats.npy"    // DO NOT USE WITH MULTI_SPEAKER MODEL. scaler stats file computed by 'compute_statistics.py'. If it is defined, mean-std based notmalization is used and other normalization params are ignored
     },
 
     // VOCABULARY PARAMETERS

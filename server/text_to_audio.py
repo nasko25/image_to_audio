@@ -5,15 +5,19 @@ from pydub import AudioSegment
 import sys
 import subprocess
 import os
+import pysbd
+import re
+import io
 
 import torch
 import time
 
-from TTS.utils.generic_utils import setup_model
+from TTS.tts.utils.generic_utils import setup_model
 from TTS.utils.io import load_config
-from TTS.utils.text.symbols import symbols, phonemes
+from TTS.tts.utils.text import make_symbols, phonemes, symbols
 from TTS.utils.audio import AudioProcessor
-from TTS.utils.synthesis import synthesis
+from TTS.tts.utils.synthesis import synthesis
+from TTS.tts.utils.synthesis import *
 
 from TTS.vocoder.utils.generic_utils import setup_generator
 
@@ -64,20 +68,23 @@ class ConvertTextToAudioGoogleTTS:
 
         print(file_name + "_audio" + expected_output_audio_format, end = "")
 
+# CITATION: https://github.com/mozilla/TTS/blob/72a6ac54c8cfaa407fc64b660248c6a788bdd381/TTS/server/synthesizer.py
 class ConvertTextToAudioMozillaTTS:
+    # TODO comments
     def __init__(self, text, expected_output_audio_format, file_name):
+        self.seg = pysbd.Segmenter(language="en", clean=True)
         # runtime settings
         use_cuda = False
 
         # model paths
-        TTS_MODEL = "/path/to/tts_model.pth.tar"
+        TTS_MODEL = "/path/to/checkpoint_130000.pth.tar"
         TTS_CONFIG = "config/config.json"
-        VOCODER_MODEL = "/path/to/vocoder_model.pth.tar"
+        VOCODER_MODEL = "/path/to/checkpoint_1450000.pth.tar"
         VOCODER_CONFIG = "config/config_vocoder.json"
 
         # load configs
         TTS_CONFIG = load_config(TTS_CONFIG)
-        VOCODER_CONFIG = load_config(VOCODER_CONFIG)
+        # VOCODER_CONFIG = load_config(VOCODER_CONFIG)
 
         # load the audio processor
         ap = AudioProcessor(**TTS_CONFIG.audio)
@@ -87,8 +94,19 @@ class ConvertTextToAudioMozillaTTS:
         self.speaker_id = None
         self.speakers = []
 
+        global symbols, phonemes
+
+        use_phonemes = TTS_CONFIG.use_phonemes
+
+        if 'characters' in TTS_CONFIG.keys():
+            symbols, phonemes = make_symbols(**TTS_CONFIG.characters)
+
+        if use_phonemes:
+            num_chars = len(phonemes)
+        else:
+            num_chars = len(symbols)
+
         # load the model
-        num_chars = len(phonemes) if TTS_CONFIG.use_phonemes else len(symbols)
         model = setup_model(num_chars, len(self.speakers), TTS_CONFIG)
 
         # load model state
@@ -100,23 +118,27 @@ class ConvertTextToAudioMozillaTTS:
             model.cuda()
         model.eval()
 
+        model.decoder.max_decoder_steps = 3000
+
         # set model stepsize
         if 'r' in cp:
             model.decoder.set_r(cp['r'])
 
-        # LOAD VOCODER MODEL
-        self.vocoder_model = setup_generator(VOCODER_CONFIG)
-        self.vocoder_model.load_state_dict(torch.load(VOCODER_MODEL, map_location="cpu")["model"])
-        self.vocoder_model.remove_weight_norm()
-        self.vocoder_model.inference_padding = 0
+        # TODO vocoder
+        # # LOAD VOCODER MODEL
+        self.vocoder_model = False
+        # self.vocoder_model = setup_generator(VOCODER_CONFIG)
+        # self.vocoder_model.load_state_dict(torch.load(VOCODER_MODEL, map_location="cpu")["model"])
+        # self.vocoder_model.remove_weight_norm()
+        # self.vocoder_model.inference_padding = 0
 
-        ap_vocoder = AudioProcessor(**VOCODER_CONFIG['audio'])
-        if use_cuda:
-            self.vocoder_model.cuda()
-        self.vocoder_model.eval()
+        # # ap_vocoder = AudioProcessor(**VOCODER_CONFIG['audio'])
+        # if use_cuda:
+        #     self.vocoder_model.cuda()
+        # self.vocoder_model.eval()
 
-        # TODO: need to train a model
-        align, spec, stop_tokens, wav = self.tts(model, text, TTS_CONFIG, use_cuda, ap, use_gl=False, figures=True)
+        # TODO: need to train a model?
+        wav = self.tts(model, text, TTS_CONFIG, use_cuda, ap, use_gl=False, figures=True)
 
         wavfile.write(file_name + "_audio.wav", TTS_CONFIG.audio["sample_rate"], wav)
 
@@ -132,7 +154,7 @@ class ConvertTextToAudioMozillaTTS:
             p = subprocess.Popen(["ffmpeg", "-i", file_name + "_audio.wav", "-c:a", "aac", "-b:a", "128k", file_name + "_audio" + expected_output_audio_format], stdout=subprocess.DEVNULL, stdin=subprocess.PIPE, stderr=subprocess.DEVNULL)
             p.communicate('y'.encode())   # it may ask to override the file
             p.wait()    # wait for it to finish
-            subprocess.run(["rm", file_name + "_audio.wav"])
+            # subprocess.run(["rm", file_name + "_audio.wav"])
         
         # otherwise the extention is not valid/or is .wav, so .wav is used as default
         else:
@@ -140,10 +162,64 @@ class ConvertTextToAudioMozillaTTS:
 
         print(file_name + "_audio" + output_audio_format, end = "")
 
+    def split_into_sentences(self, text):
+        return self.seg.segment(text)
+
     def tts(self, model, text, CONFIG, use_cuda, ap, use_gl, figures=True):
         t_1 = time.time()
+
+        wavs = []
+        sens = self.split_into_sentences(text)
+        print(sens)
+        self.speaker_id = id_to_torch(self.speaker_id)
+        if self.speaker_id is not None and use_cuda:
+            self.speaker_id = self.speaker_id.cuda()
+
+        for sen in sens:
+            # preprocess the given text
+            inputs = text_to_seqvec(sen, CONFIG)
+            inputs = numpy_to_torch(inputs, torch.long, cuda=use_cuda)
+            inputs = inputs.unsqueeze(0)
+            print(sen, "\n\n")
+            # synthesize voice
+            _, postnet_output, _, _ = run_model_torch(model, inputs, CONFIG, False, self.speaker_id, None)
+            if self.vocoder_model:
+                # use native vocoder model
+                vocoder_input = postnet_output[0].transpose(0, 1).unsqueeze(0)
+                wav = self.vocoder_model.inference(vocoder_input)
+                if use_cuda:
+                    wav = wav.cpu().numpy()
+                else:
+                    wav = wav.numpy()
+                wav = wav.flatten()
+            else:
+                # use GL
+                if use_cuda:
+                    postnet_output = postnet_output[0].cpu()
+                else:
+                    postnet_output = postnet_output[0]
+                postnet_output = postnet_output.numpy()
+                wav = inv_spectrogram(postnet_output, ap, CONFIG)
+
+            # trim silence
+            wav = trim_silence(wav, ap)
+
+            wavs += list(wav)
+            wavs += [0] * 10000
+
+        # out = io.BytesIO()
+        # self.save_wav(wavs, out)
+        wavs = np.array(wavs)
+
+        # compute stats
+        process_time = time.time() - t_1
+        audio_time = len(wavs) / CONFIG.audio['sample_rate']
+        print(f" > Processing time: {process_time}")
+        print(f" > Real-time factor: {process_time / audio_time}")
+        return wavs
+
         waveform, alignment, mel_spec, mel_postnet_spec, stop_tokens, inputs = synthesis(model, text, CONFIG, use_cuda, ap, self.speaker_id, style_wav=None,
-                                                                                truncated=False, enable_eos_bos_chars=CONFIG.enable_eos_bos_chars)
+                                                                                truncated=False, enable_eos_bos_chars=CONFIG.enable_eos_bos_chars, use_griffin_lim=True)
         # mel_postnet_spec = ap._denormalize(mel_postnet_spec.T)
         if not use_gl:
             waveform = self.vocoder_model.inference(torch.FloatTensor(mel_postnet_spec.T).unsqueeze(0))
@@ -170,6 +246,7 @@ class ConvertTextToAudioMozillaTTS:
 #     ConvertTextToAudioGoogleTTS(text = f.read(), expected_output_audio_format = sys.argv[1], file_name = sys.argv[2].split(".")[0])
 
 # TODO read from file
-ConvertTextToAudioMozillaTTS(text= "This is a test sentence. I will copy some text to check the generated speech.\nSmile spoke total few great had never their too. Amongst moments do in arrived at my replied.",
+test = "Once more unto the breach, dear friends, once more, Or close the wall up with our English dead! In peace there's nothing so becomes a man As modest stillness and humility, But when the blast of war blows in our ears, Then imitate the action of the tiger: Stiffen the sinews, summon up the blood, Disguise fair nature with hard-favored rage; Then lend the eye a terrible aspect: Let it pry through the portage of the head Like the brass cannon; let the brow o'erwhelm it As fearfully as doth a gallèd rock O'erhang and jutty his confounded base, Swilled with the wild and wasteful ocean. Now set the teeth and stretch the nostril wide, Hold hard the breath and bend up every spirit To his full height! On, on, you noble English, Whose blood is fet from fathers of war-proof, Fathers that like so many Alexanders Have in these parts from morn till even fought And sheathed their swords for lack of argument. Dishonor not your mothers; now attest That those whom you called fathers did beget you! Be copy now to men of grosser blood And teach them how to war! And you, good yeomen, Whose limbs were made in England, show us here The mettle of your pasture. Let us swear That you are worth your breeding; which I doubt not, For there is none of you so mean and base That hath not noble lustre in your eyes. I see you stand like greyhounds in the slips, Straining upon the start. The game's afoot! Follow your spirit; and upon this charge Cry 'God for Harry! England and Saint George!!"
+ConvertTextToAudioMozillaTTS(text= test,
                                 expected_output_audio_format = ".m4a", file_name = "asdfasdf")
-
+print(test)
