@@ -1,13 +1,41 @@
 #! /usr/bin/env python3
 
-# from google.cloud import texttospeech
-from pydub import AudioSegment
 import sys
-import subprocess
 import os
-import pysbd
-import re
+
+from google.cloud import texttospeech
+from pydub import AudioSegment
+
+import subprocess
+
 import io
+
+def disable_stdout():
+    # open 2 fds
+    null_fds = [os.open(os.devnull, os.O_RDWR) for x in range(2)]
+    # save the current file descriptors
+    save = os.dup(1), os.dup(2)
+    # put /dev/null fds on 1 and 2
+    os.dup2(null_fds[0], 1)
+    os.dup2(null_fds[1], 2)
+    return save, null_fds
+
+def enable_stdout(save, null_fds):
+    # restore file descriptors
+    os.dup2(save[0], 1)
+    os.dup2(save[1], 2)
+    # close the temporary fds
+    os.close(null_fds[0])
+    os.close(null_fds[1])
+    os.close(save[0])
+    os.close(save[1])
+
+
+import re
+
+# pysbd prints a warning if the pc does not have a gpu
+save, null_fds = disable_stdout()
+import pysbd
 
 import torch
 import time
@@ -17,6 +45,7 @@ from TTS.utils.io import load_config
 from TTS.tts.utils.text import make_symbols, phonemes, symbols
 from TTS.utils.audio import AudioProcessor
 from TTS.tts.utils.synthesis import synthesis
+# TODO import manually; remove import *
 from TTS.tts.utils.synthesis import *
 
 from TTS.vocoder.utils.generic_utils import setup_generator
@@ -65,13 +94,12 @@ class ConvertTextToAudioGoogleTTS:
             p.wait()    # wait for it to finish
             subprocess.run(["rm", file_name + "_audio" + self.expected_output_audio_format])
 
-
+        enable_stdout(save, null_fds)
         print(file_name + "_audio" + expected_output_audio_format, end = "")
 
 # CITATION: https://github.com/mozilla/TTS/blob/72a6ac54c8cfaa407fc64b660248c6a788bdd381/TTS/server/synthesizer.py
 class ConvertTextToAudioMozillaTTS:
-    # TODO comments
-    # TODO remove all prints except the name of the file
+    # TODO add comments where needed
     def __init__(self, text, expected_output_audio_format, file_name):
         self.seg = pysbd.Segmenter(language="en", clean=True)
         # runtime settings
@@ -160,6 +188,7 @@ class ConvertTextToAudioMozillaTTS:
         else:
             output_audio_format = ".wav"
 
+        enable_stdout(save, null_fds)
         print(file_name + "_audio" + output_audio_format, end = "")
 
     # TODO could be better (!. or !!. at the end of sentence breaks the method)
@@ -183,7 +212,6 @@ class ConvertTextToAudioMozillaTTS:
             inputs = inputs.unsqueeze(0)
             print(sen, "\n\n")
             # synthesize voice
-            # FIXME when a sentence ends with !. this fails:        add a try-catch
             try:
                 _, postnet_output, _, _ = run_model_torch(model, inputs, CONFIG, False, self.speaker_id, None)
             except:
@@ -258,4 +286,3 @@ Once more unto the breach, dear friends, once more, Or close the wall up with ou
 """
 ConvertTextToAudioMozillaTTS(text= test,
                                 expected_output_audio_format = ".m4a", file_name = "asdfasdf")
-print(test)
