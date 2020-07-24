@@ -1,4 +1,4 @@
-#! /usr/bin/env python
+#! /usr/bin/env python3
 # 1 image proccessing
 # 2 tesseract
 

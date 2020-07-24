@@ -33,8 +33,9 @@ def enable_stdout(save, null_fds):
 
 import re
 
+# TODO disable printing
 # pysbd prints a warning if the pc does not have a gpu
-save, null_fds = disable_stdout()
+# save, null_fds = disable_stdout()
 import pysbd
 
 import torch
@@ -94,7 +95,7 @@ class ConvertTextToAudioGoogleTTS:
             p.wait()    # wait for it to finish
             subprocess.run(["rm", file_name + "_audio" + self.expected_output_audio_format])
 
-        enable_stdout(save, null_fds)
+        # enable_stdout(save, null_fds)
         print(file_name + "_audio" + expected_output_audio_format, end = "")
 
 # CITATION: https://github.com/mozilla/TTS/blob/72a6ac54c8cfaa407fc64b660248c6a788bdd381/TTS/server/synthesizer.py
@@ -107,9 +108,9 @@ class ConvertTextToAudioMozillaTTS:
 
         # model paths
         TTS_MODEL = "/path/to/checkpoint_130000.pth.tar"
-        TTS_CONFIG = "config/config.json"
+        TTS_CONFIG = "server/config/config.json"
         VOCODER_MODEL = "/path/to/checkpoint_1450000.pth.tar"
-        VOCODER_CONFIG = "config/config_vocoder.json"
+        VOCODER_CONFIG = "server/config/config_vocoder.json"
 
         # load configs
         TTS_CONFIG = load_config(TTS_CONFIG)
@@ -166,16 +167,29 @@ class ConvertTextToAudioMozillaTTS:
 
         # TODO: need to train a model?
         wav = self.tts(model, text, TTS_CONFIG, use_cuda, ap, use_gl=False, figures=True)
+        print(len(wav.tobytes()))
 
         wavfile.write(file_name + "_audio.wav", TTS_CONFIG.audio["sample_rate"], wav)
 
         output_audio_format = expected_output_audio_format
         # if it is any of the other supported audio formats
-        if expected_output_audio_format == ".flac" or expected_output_audio_format == ".aiff" or expected_output_audio_format == ".mp3":
-            old_format = AudioSegment.from_wav(file_name + "_audio.wav")
-            old_format.export(file_name + "_audio" + expected_output_audio_format, format = expected_output_audio_format[1:])
+        if expected_output_audio_format == ".mp3":
+            # TODO abstract the argument array in Popen() to prevent code duplication 
+                                                                        # no video  # audio sampling frequency              # audio channels
+            p = subprocess.Popen(["ffmpeg", "-i", file_name + "_audio.wav", "-vn", "-ar", TTS_CONFIG.audio["sample_rate"], "-ac", "2",
+                # bit rate/second
+                "-b:a", "192k", file_name + "_audio" + expected_output_audio_format], stdout=subprocess.DEVNULL, stdin=subprocess.PIPE, stderr=subprocess.DEVNULL)
+            p.communicate('y'.encode())   # it may ask to override the file
+            p.wait()    # wait for it to finish
+
+            # old_format = AudioSegment(wav.astype("float32").tobytes(), frame_rate=TTS_CONFIG.audio["sample_rate"], sample_width=8, channels=1)
+            # old_format.export(file_name + "_audio" + expected_output_audio_format, format = expected_output_audio_format[1:])
             # remove the wav file
             subprocess.run(["rm", file_name + "_audio.wav"])
+
+        elif expected_output_audio_format == ".flac" or expected_output_audio_format == ".aiff":
+            # TODO
+            pass
 
         elif expected_output_audio_format == ".m4a":
             p = subprocess.Popen(["ffmpeg", "-i", file_name + "_audio.wav", "-c:a", "aac", "-b:a", "128k", file_name + "_audio" + expected_output_audio_format], stdout=subprocess.DEVNULL, stdin=subprocess.PIPE, stderr=subprocess.DEVNULL)
@@ -188,7 +202,7 @@ class ConvertTextToAudioMozillaTTS:
         else:
             output_audio_format = ".wav"
 
-        enable_stdout(save, null_fds)
+        # enable_stdout(save, null_fds)
         print(file_name + "_audio" + output_audio_format, end = "")
 
     # TODO could be better (!. or !!. at the end of sentence breaks the method)
@@ -280,9 +294,8 @@ class ConvertTextToAudioMozillaTTS:
 # with open(sys.argv[2], 'r') as f:
 #     ConvertTextToAudioGoogleTTS(text = f.read(), expected_output_audio_format = sys.argv[1], file_name = sys.argv[2].split(".")[0])
 
-# TODO read from file
-test = """ 
-Once more unto the breach, dear friends, once more, Or close the wall up with our English dead! In peace there's nothing so becomes a man As modest stillness and humility, But when the blast of war blows in our ears, Then imitate the action of the tiger: Stiffen the sinews, summon up the blood, Disguise fair nature with hard-favored rage; Then lend the eye a terrible aspect: Let it pry through the portage of the head Like the brass cannon; let the brow o'erwhelm it As fearfully as doth a gallèd rock O'erhang and jutty his confounded base, Swilled with the wild and wasteful ocean. Now set the teeth and stretch the nostril wide, Hold hard the breath and bend up every spirit To his full height! On, on, you noble English, Whose blood is fet from fathers of war-proof, Fathers that like so many Alexanders Have in these parts from morn till even fought And sheathed their swords for lack of argument. Dishonor not your mothers; now attest That those whom you called fathers did beget you! Be copy now to men of grosser blood And teach them how to war! And you, good yeomen, Whose limbs were made in England, show us here The mettle of your pasture. Let us swear That you are worth your breeding; which I doubt not, For there is none of you so mean and base That hath not noble lustre in your eyes. I see you stand like greyhounds in the slips, Straining upon the start. The game's afoot! Follow your spirit; and upon this charge Cry 'God for Harry! England and Saint George!.
-"""
-ConvertTextToAudioMozillaTTS(text= test,
-                                expected_output_audio_format = ".m4a", file_name = "asdfasdf")
+# read the text to convert to speech from file
+text = "Hello checking the mp3 thingy"
+# with open(sys.argv[2], 'r') as f:
+#     ConvertTextToAudioMozillaTTS(text= f.read(), expected_output_audio_format = sys.argv[1], file_name = sys.argv[2].split(".")[0])
+ConvertTextToAudioMozillaTTS(text= text, expected_output_audio_format = ".mp3", file_name = "asdfasdf")
