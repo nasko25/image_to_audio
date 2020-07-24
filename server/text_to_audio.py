@@ -59,7 +59,10 @@ from TTS.vocoder.utils.generic_utils import setup_generator
 
 from scipy.io import wavfile
 
-saved_stdout, null_fd = disable_stdout()
+DEBUG = False
+
+if not DEBUG:
+    saved_stdout, null_fd = disable_stdout()
 
 # TODO: maybe use an open source project instead of googleTTS; https://github.com/mozilla/TTS
 class ConvertTextToAudioGoogleTTS:
@@ -103,7 +106,8 @@ class ConvertTextToAudioGoogleTTS:
             p.wait()    # wait for it to finish
             subprocess.run(["rm", file_name + "_audio" + self.expected_output_audio_format])
 
-        enable_stdout(saved_stdout, null_fd)
+        if not DEBUG:
+            enable_stdout(saved_stdout, null_fd)
         print(file_name + "_audio" + expected_output_audio_format, end = "")
 
 # CITATION: https://github.com/mozilla/TTS/blob/72a6ac54c8cfaa407fc64b660248c6a788bdd381/TTS/server/synthesizer.py
@@ -215,7 +219,8 @@ class ConvertTextToAudioMozillaTTS:
         else:
             output_audio_format = ".wav"
 
-        enable_stdout(saved_stdout, null_fd)
+        if not DEBUG:
+            enable_stdout(saved_stdout, null_fd)
         print(file_name + "_audio" + output_audio_format, end = "")
 
     # TODO could be better (!. or !!. at the end of sentence breaks the method)
