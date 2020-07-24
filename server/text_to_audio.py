@@ -51,8 +51,6 @@ from TTS.tts.utils.generic_utils import setup_model
 from TTS.utils.io import load_config
 from TTS.tts.utils.text import make_symbols, phonemes, symbols
 from TTS.utils.audio import AudioProcessor
-from TTS.tts.utils.synthesis import synthesis
-# TODO import manually; remove import *
 from TTS.tts.utils.synthesis import *
 
 from TTS.vocoder.utils.generic_utils import setup_generator
@@ -64,7 +62,6 @@ DEBUG = False
 if not DEBUG:
     saved_stdout, null_fd = disable_stdout()
 
-# TODO: maybe use an open source project instead of googleTTS; https://github.com/mozilla/TTS
 class ConvertTextToAudioGoogleTTS:
     def __init__(self, text, expected_output_audio_format, file_name):
         self.client = texttospeech.TextToSpeechClient()
@@ -247,7 +244,6 @@ class ConvertTextToAudioMozillaTTS:
             try:
                 _, postnet_output, _, _ = run_model_torch(model, inputs, CONFIG, False, self.speaker_id, None)
             except:
-                # TODO remove print
                 print("ERROR")
                 continue
             if self.vocoder_model:
@@ -296,7 +292,7 @@ class ConvertTextToAudioMozillaTTS:
         waveform = waveform.numpy()
         rtf = (time.time() - t_1) / (len(waveform) / ap.sample_rate)
         tps = (time.time() - t_1) / len(waveform)
-        # TODO comment out debugging prints
+
         print(waveform.shape)
         print(" > Run-time: {}".format(time.time() - t_1))
         print(" > Real-time factor: {}".format(rtf))
@@ -313,7 +309,7 @@ class ConvertTextToAudioMozillaTTS:
 #     ConvertTextToAudioGoogleTTS(text = f.read(), expected_output_audio_format = sys.argv[1], file_name = sys.argv[2].split(".")[0])
 
 # read the text to convert to speech from file
-text = "Hello checking the mp3 thingy"
+# text = "Hello checking the mp3 thingy"
 with open(sys.argv[2], 'r') as f:
     ConvertTextToAudioMozillaTTS(text= f.read(), expected_output_audio_format = sys.argv[1], file_name = sys.argv[2].split(".")[0])
 # ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".mp3", file_name = "asdf")
