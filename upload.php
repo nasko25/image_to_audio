@@ -90,7 +90,7 @@
 		$file_name = explode(".", $file_name)[0];
 		$file_name = explode("/", $file_name)[2];
 		header("Set-Cookie: loaded=true; Max-Age=15; SameSite=Lax");
-		// TODO do the same about the other 3 possible audio formats
+
 		if ($_POST["to"] === ".flac")
 			header("Content-Type: audio/flac");
 		else if ($_POST["to"] === ".wav")

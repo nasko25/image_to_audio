@@ -57,7 +57,7 @@ from TTS.vocoder.utils.generic_utils import setup_generator
 
 from scipy.io import wavfile
 
-DEBUG = False
+DEBUG = True
 
 if not DEBUG:
     saved_stdout, null_fd = disable_stdout()
@@ -181,23 +181,13 @@ class ConvertTextToAudioMozillaTTS:
         wavfile.write(file_name + "_audio.wav", TTS_CONFIG.audio["sample_rate"], wav)
 
         output_audio_format = expected_output_audio_format
+
+        # if it is wav, no further work is needed
+        # TODO consider calling ffmpeg -i generated.wav new.wav
+        # because the generated wav file is weird and cannot be played with all audio players.
+
         # if it is any of the other supported audio formats
-        if expected_output_audio_format == ".mp3":
-            # TODO abstract the argument array in Popen() to prevent code duplication 
-                                                                        # no video  # audio sampling frequency              # audio channels
-            p = subprocess.Popen(["ffmpeg", "-i", file_name + "_audio.wav", "-vn", "-ar", str(TTS_CONFIG.audio["sample_rate"]), "-ac", "2",
-                # bit rate/second
-                "-b:a", "192k", file_name + "_audio" + expected_output_audio_format], stdout=subprocess.DEVNULL, stdin=subprocess.PIPE, stderr=subprocess.DEVNULL)
-            p.communicate('y'.encode())   # it may ask to override the file
-            p.wait()    # wait for it to finish
-
-            # old_format = AudioSegment(wav.astype("float32").tobytes(), frame_rate=TTS_CONFIG.audio["sample_rate"], sample_width=8, channels=1)
-            # old_format.export(file_name + "_audio" + expected_output_audio_format, format = expected_output_audio_format[1:])
-
-            # remove the wav file
-            subprocess.run(["rm", file_name + "_audio.wav"])
-
-        elif expected_output_audio_format == ".flac" or expected_output_audio_format == ".aiff":
+        if expected_output_audio_format == ".flac" or expected_output_audio_format == ".aiff":
             p = subprocess.Popen(["ffmpeg", "-i", file_name + "_audio.wav", file_name + "_audio" + expected_output_audio_format],
                 stdout=subprocess.DEVNULL, stdin=subprocess.PIPE, stderr=subprocess.DEVNULL)
             p.communicate('y'.encode()) # it may ask to override the file
@@ -212,9 +202,24 @@ class ConvertTextToAudioMozillaTTS:
             p.wait()    # wait for it to finish
             subprocess.run(["rm", file_name + "_audio.wav"])
         
-        # otherwise the extention is not valid/or is .wav, so .wav is used as default
-        else:
-            output_audio_format = ".wav"
+        # otherwise if the extention is not .wav, it is not valid/or is .mp3, so .mp3 is used as default
+        elif expected_output_audio_format != ".wav":
+            # if expected_output_audio_format == ".mp3":
+            # TODO abstract the argument array in Popen() to prevent code duplication
+                                                                        # no video  # audio sampling frequency              # audio channels
+            p = subprocess.Popen(["ffmpeg", "-i", file_name + "_audio.wav", "-vn", "-ar", str(TTS_CONFIG.audio["sample_rate"]), "-ac", "2",
+                # bit rate/second
+                "-b:a", "192k", file_name + "_audio.mp3"], stdout=subprocess.DEVNULL, stdin=subprocess.PIPE, stderr=subprocess.DEVNULL)
+            p.communicate('y'.encode())   # it may ask to override the file
+            p.wait()    # wait for it to finish
+
+            # old_format = AudioSegment(wav.astype("float32").tobytes(), frame_rate=TTS_CONFIG.audio["sample_rate"], sample_width=8, channels=1)
+            # old_format.export(file_name + "_audio" + expected_output_audio_format, format = expected_output_audio_format[1:])
+
+            # remove the wav file
+            subprocess.run(["rm", file_name + "_audio.wav"])
+
+            output_audio_format = ".mp3"
 
         if not DEBUG:
             enable_stdout(saved_stdout, null_fd)
@@ -309,7 +314,12 @@ class ConvertTextToAudioMozillaTTS:
 #     ConvertTextToAudioGoogleTTS(text = f.read(), expected_output_audio_format = sys.argv[1], file_name = sys.argv[2].split(".")[0])
 
 # read the text to convert to speech from file
-# text = "Hello checking the mp3 thingy"
-with open(sys.argv[2], 'r') as f:
-    ConvertTextToAudioMozillaTTS(text= f.read(), expected_output_audio_format = sys.argv[1], file_name = sys.argv[2].split(".")[0])
+text = "Hello, I am just checking the audio formats."
+# with open(sys.argv[2], 'r') as f:
+#     ConvertTextToAudioMozillaTTS(text= f.read(), expected_output_audio_format = sys.argv[1], file_name = sys.argv[2].split(".")[0])
 # ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".mp3", file_name = "asdf")
+# ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".m4a", file_name = "asdf")
+# ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".flac", file_name = "asdf")
+# ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".aiff", file_name = "asdf")
+# ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".wav", file_name = "asdf")
+ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".flacq", file_name = "not_valid_format")
