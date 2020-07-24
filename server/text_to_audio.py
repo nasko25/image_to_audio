@@ -11,31 +11,37 @@ import subprocess
 import io
 
 def disable_stdout():
-    # open 2 fds
-    null_fds = [os.open(os.devnull, os.O_RDWR) for x in range(2)]
-    # save the current file descriptors
-    save = os.dup(1), os.dup(2)
-    # put /dev/null fds on 1 and 2
-    os.dup2(null_fds[0], 1)
-    os.dup2(null_fds[1], 2)
-    return save, null_fds
+    saved_stdout = sys.stdout
 
-def enable_stdout(save, null_fds):
-    # restore file descriptors
-    os.dup2(save[0], 1)
-    os.dup2(save[1], 2)
-    # close the temporary fds
-    os.close(null_fds[0])
-    os.close(null_fds[1])
-    os.close(save[0])
-    os.close(save[1])
+    null_fd = open(os.devnull, 'w')
+    sys.stdout = null_fd
+
+    return saved_stdout, null_fd
+
+    # # open 2 fds
+    # null_fds = [os.open(os.devnull, os.O_RDWR) for x in range(2)]
+    # # save the current file descriptors
+    # save = os.dup(1), os.dup(2)
+    # # put /dev/null fds on 1 and 2
+    # os.dup2(null_fds[0], 1)
+    # os.dup2(null_fds[1], 2)
+    # return save, null_fds
+
+def enable_stdout(saved_stdout, null_fd):
+    # restore stdout and stderr file descriptors
+    sys.stdout = saved_stdout
+    null_fd.close()
+
+    # print(save)
+    # os.dup2(save[0], 1)
+    # os.dup2(save[1], 2)
+    # # close the temporary fds
+    # os.close(null_fds[0])
+    # os.close(null_fds[1])
 
 
 import re
 
-# TODO disable printing
-# pysbd prints a warning if the pc does not have a gpu
-# save, null_fds = disable_stdout()
 import pysbd
 
 import torch
@@ -52,6 +58,8 @@ from TTS.tts.utils.synthesis import *
 from TTS.vocoder.utils.generic_utils import setup_generator
 
 from scipy.io import wavfile
+
+saved_stdout, null_fd = disable_stdout()
 
 # TODO: maybe use an open source project instead of googleTTS; https://github.com/mozilla/TTS
 class ConvertTextToAudioGoogleTTS:
@@ -95,7 +103,7 @@ class ConvertTextToAudioGoogleTTS:
             p.wait()    # wait for it to finish
             subprocess.run(["rm", file_name + "_audio" + self.expected_output_audio_format])
 
-        # enable_stdout(save, null_fds)
+        enable_stdout(saved_stdout, null_fd)
         print(file_name + "_audio" + expected_output_audio_format, end = "")
 
 # CITATION: https://github.com/mozilla/TTS/blob/72a6ac54c8cfaa407fc64b660248c6a788bdd381/TTS/server/synthesizer.py
@@ -184,14 +192,15 @@ class ConvertTextToAudioMozillaTTS:
 
             # old_format = AudioSegment(wav.astype("float32").tobytes(), frame_rate=TTS_CONFIG.audio["sample_rate"], sample_width=8, channels=1)
             # old_format.export(file_name + "_audio" + expected_output_audio_format, format = expected_output_audio_format[1:])
+
             # remove the wav file
             subprocess.run(["rm", file_name + "_audio.wav"])
 
         elif expected_output_audio_format == ".flac" or expected_output_audio_format == ".aiff":
             p = subprocess.Popen(["ffmpeg", "-i", file_name + "_audio.wav", file_name + "_audio" + expected_output_audio_format],
                 stdout=subprocess.DEVNULL, stdin=subprocess.PIPE, stderr=subprocess.DEVNULL)
-            p.communicate('y'.encode())
-            p.wait()
+            p.communicate('y'.encode()) # it may ask to override the file
+            p.wait()  # wait for it to finish
 
             subprocess.run(["rm", file_name + "_audio.wav"])
 
@@ -206,7 +215,7 @@ class ConvertTextToAudioMozillaTTS:
         else:
             output_audio_format = ".wav"
 
-        # enable_stdout(save, null_fds)
+        enable_stdout(saved_stdout, null_fd)
         print(file_name + "_audio" + output_audio_format, end = "")
 
     # TODO could be better (!. or !!. at the end of sentence breaks the method)
@@ -300,10 +309,6 @@ class ConvertTextToAudioMozillaTTS:
 
 # read the text to convert to speech from file
 text = "Hello checking the mp3 thingy"
-# with open(sys.argv[2], 'r') as f:
-#     ConvertTextToAudioMozillaTTS(text= f.read(), expected_output_audio_format = sys.argv[1], file_name = sys.argv[2].split(".")[0])
-ConvertTextToAudioMozillaTTS(text= text, expected_output_audio_format = ".mp3", file_name = "asdfasdf")
-ConvertTextToAudioMozillaTTS(text= text, expected_output_audio_format = ".m4a", file_name = "asdfasdf")
-ConvertTextToAudioMozillaTTS(text= text, expected_output_audio_format = ".flac", file_name = "asdfasdf")
-ConvertTextToAudioMozillaTTS(text= text, expected_output_audio_format = ".aiff", file_name = "asdfasdf")
-ConvertTextToAudioMozillaTTS(text= text, expected_output_audio_format = ".wav", file_name = "asdfasdf")
+with open(sys.argv[2], 'r') as f:
+    ConvertTextToAudioMozillaTTS(text= f.read(), expected_output_audio_format = sys.argv[1], file_name = sys.argv[2].split(".")[0])
+# ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".mp3", file_name = "asdf")
