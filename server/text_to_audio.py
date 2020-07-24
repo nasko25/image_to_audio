@@ -176,7 +176,7 @@ class ConvertTextToAudioMozillaTTS:
         if expected_output_audio_format == ".mp3":
             # TODO abstract the argument array in Popen() to prevent code duplication 
                                                                         # no video  # audio sampling frequency              # audio channels
-            p = subprocess.Popen(["ffmpeg", "-i", file_name + "_audio.wav", "-vn", "-ar", TTS_CONFIG.audio["sample_rate"], "-ac", "2",
+            p = subprocess.Popen(["ffmpeg", "-i", file_name + "_audio.wav", "-vn", "-ar", str(TTS_CONFIG.audio["sample_rate"]), "-ac", "2",
                 # bit rate/second
                 "-b:a", "192k", file_name + "_audio" + expected_output_audio_format], stdout=subprocess.DEVNULL, stdin=subprocess.PIPE, stderr=subprocess.DEVNULL)
             p.communicate('y'.encode())   # it may ask to override the file
@@ -188,15 +188,19 @@ class ConvertTextToAudioMozillaTTS:
             subprocess.run(["rm", file_name + "_audio.wav"])
 
         elif expected_output_audio_format == ".flac" or expected_output_audio_format == ".aiff":
-            # TODO
-            pass
+            p = subprocess.Popen(["ffmpeg", "-i", file_name + "_audio.wav", file_name + "_audio" + expected_output_audio_format],
+                stdout=subprocess.DEVNULL, stdin=subprocess.PIPE, stderr=subprocess.DEVNULL)
+            p.communicate('y'.encode())
+            p.wait()
+
+            subprocess.run(["rm", file_name + "_audio.wav"])
 
         elif expected_output_audio_format == ".m4a":
-            p = subprocess.Popen(["ffmpeg", "-i", file_name + "_audio.wav", "-c:a", "aac", "-b:a", "128k", file_name + "_audio" + expected_output_audio_format], stdout=subprocess.DEVNULL, stdin=subprocess.PIPE, stderr=subprocess.DEVNULL)
+            p = subprocess.Popen(["ffmpeg", "-i", file_name + "_audio.wav", "-c:a", "aac", "-b:a", "128k", file_name + "_audio" + expected_output_audio_format],
+                stdout=subprocess.DEVNULL, stdin=subprocess.PIPE, stderr=subprocess.DEVNULL)
             p.communicate('y'.encode())   # it may ask to override the file
             p.wait()    # wait for it to finish
-            # TODO uncomment:
-            # subprocess.run(["rm", file_name + "_audio.wav"])
+            subprocess.run(["rm", file_name + "_audio.wav"])
         
         # otherwise the extention is not valid/or is .wav, so .wav is used as default
         else:
@@ -299,3 +303,7 @@ text = "Hello checking the mp3 thingy"
 # with open(sys.argv[2], 'r') as f:
 #     ConvertTextToAudioMozillaTTS(text= f.read(), expected_output_audio_format = sys.argv[1], file_name = sys.argv[2].split(".")[0])
 ConvertTextToAudioMozillaTTS(text= text, expected_output_audio_format = ".mp3", file_name = "asdfasdf")
+ConvertTextToAudioMozillaTTS(text= text, expected_output_audio_format = ".m4a", file_name = "asdfasdf")
+ConvertTextToAudioMozillaTTS(text= text, expected_output_audio_format = ".flac", file_name = "asdfasdf")
+ConvertTextToAudioMozillaTTS(text= text, expected_output_audio_format = ".aiff", file_name = "asdfasdf")
+ConvertTextToAudioMozillaTTS(text= text, expected_output_audio_format = ".wav", file_name = "asdfasdf")
