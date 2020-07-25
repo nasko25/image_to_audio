@@ -115,7 +115,7 @@ class ConvertTextToAudioMozillaTTS:
         # runtime settings
         use_cuda = False
 
-        # model paths
+        # model paths - taken from Mozilla TTS's github page
         TTS_MODEL = "/path/to/checkpoint_130000.pth.tar"
         TTS_CONFIG = "server/config/config.json"
         VOCODER_MODEL = "/path/to/checkpoint_1450000.pth.tar"
@@ -182,12 +182,19 @@ class ConvertTextToAudioMozillaTTS:
 
         output_audio_format = expected_output_audio_format
 
-        # if it is wav, no further work is needed
-        # TODO consider calling ffmpeg -i generated.wav new.wav
+        # if .wav is expected, call ffmpeg to convert it to a more universal version of .wav
         # because the generated wav file is weird and cannot be played with all audio players.
+        if expected_output_audio_format == ".wav":
+            p = subprocess.Popen(["ffmpeg", "-i", file_name + "_audio.wav", file_name + "w_audio" + expected_output_audio_format],
+                stdout=subprocess.DEVNULL, stdin=subprocess.PIPE, stderr=subprocess.DEVNULL)
+            p.communicate('y'.encode()) # it may ask to override the file
+            p.wait()  # wait for it to finish
 
-        # if it is any of the other supported audio formats
-        if expected_output_audio_format == ".flac" or expected_output_audio_format == ".aiff":
+            subprocess.run(["rm", file_name + "_audio.wav"])
+            file_name = file_name + "w"
+
+        # else if it is any of the other supported audio formats
+        elif expected_output_audio_format == ".flac" or expected_output_audio_format == ".aiff":
             p = subprocess.Popen(["ffmpeg", "-i", file_name + "_audio.wav", file_name + "_audio" + expected_output_audio_format],
                 stdout=subprocess.DEVNULL, stdin=subprocess.PIPE, stderr=subprocess.DEVNULL)
             p.communicate('y'.encode()) # it may ask to override the file
@@ -202,8 +209,8 @@ class ConvertTextToAudioMozillaTTS:
             p.wait()    # wait for it to finish
             subprocess.run(["rm", file_name + "_audio.wav"])
         
-        # otherwise if the extention is not .wav, it is not valid/or is .mp3, so .mp3 is used as default
-        elif expected_output_audio_format != ".wav":
+        # otherwise the extention is not valid/or is .mp3, so .mp3 is used as default
+        else:
             # if expected_output_audio_format == ".mp3":
             # TODO abstract the argument array in Popen() to prevent code duplication
                                                                         # no video  # audio sampling frequency              # audio channels
@@ -317,9 +324,9 @@ class ConvertTextToAudioMozillaTTS:
 text = "Hello, I am just checking the audio formats."
 # with open(sys.argv[2], 'r') as f:
 #     ConvertTextToAudioMozillaTTS(text= f.read(), expected_output_audio_format = sys.argv[1], file_name = sys.argv[2].split(".")[0])
-# ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".mp3", file_name = "asdf")
-# ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".m4a", file_name = "asdf")
-# ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".flac", file_name = "asdf")
-# ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".aiff", file_name = "asdf")
-# ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".wav", file_name = "asdf")
+ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".mp3", file_name = "asdf")
+ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".m4a", file_name = "asdf")
+ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".flac", file_name = "asdf")
+ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".aiff", file_name = "asdf")
+ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".wav", file_name = "asdf")
 ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".flacq", file_name = "not_valid_format")
