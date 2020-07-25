@@ -115,7 +115,7 @@ class ConvertTextToAudioMozillaTTS:
         # runtime settings
         use_cuda = False
 
-        # model paths - taken from Mozilla TTS's github page
+        # model paths - models and config files are taken from Mozilla TTS's github page
         TTS_MODEL = "/path/to/checkpoint_130000.pth.tar"
         TTS_CONFIG = "server/config/config.json"
         VOCODER_MODEL = "/path/to/checkpoint_1450000.pth.tar"
@@ -180,53 +180,36 @@ class ConvertTextToAudioMozillaTTS:
 
         wavfile.write(file_name + "_audio.wav", TTS_CONFIG.audio["sample_rate"], wav)
 
-        output_audio_format = expected_output_audio_format
 
-        # if .wav is expected, call ffmpeg to convert it to a more universal version of .wav
-        # because the generated wav file is weird and cannot be played with all audio players.
-        if expected_output_audio_format == ".wav":
-            p = subprocess.Popen(["ffmpeg", "-i", file_name + "_audio.wav", file_name + "w_audio" + expected_output_audio_format],
-                stdout=subprocess.DEVNULL, stdin=subprocess.PIPE, stderr=subprocess.DEVNULL)
-            p.communicate('y'.encode()) # it may ask to override the file
-            p.wait()  # wait for it to finish
-
-            subprocess.run(["rm", file_name + "_audio.wav"])
-            file_name = file_name + "w"
-
-        # else if it is any of the other supported audio formats
-        elif expected_output_audio_format == ".flac" or expected_output_audio_format == ".aiff":
-            p = subprocess.Popen(["ffmpeg", "-i", file_name + "_audio.wav", file_name + "_audio" + expected_output_audio_format],
-                stdout=subprocess.DEVNULL, stdin=subprocess.PIPE, stderr=subprocess.DEVNULL)
-            p.communicate('y'.encode()) # it may ask to override the file
-            p.wait()  # wait for it to finish
-
-            subprocess.run(["rm", file_name + "_audio.wav"])
-
-        elif expected_output_audio_format == ".m4a":
-            p = subprocess.Popen(["ffmpeg", "-i", file_name + "_audio.wav", "-c:a", "aac", "-b:a", "128k", file_name + "_audio" + expected_output_audio_format],
-                stdout=subprocess.DEVNULL, stdin=subprocess.PIPE, stderr=subprocess.DEVNULL)
-            p.communicate('y'.encode())   # it may ask to override the file
-            p.wait()    # wait for it to finish
-            subprocess.run(["rm", file_name + "_audio.wav"])
-        
-        # otherwise the extention is not valid/or is .mp3, so .mp3 is used as default
-        else:
-            # if expected_output_audio_format == ".mp3":
-            # TODO abstract the argument array in Popen() to prevent code duplication
-                                                                        # no video  # audio sampling frequency              # audio channels
-            p = subprocess.Popen(["ffmpeg", "-i", file_name + "_audio.wav", "-vn", "-ar", str(TTS_CONFIG.audio["sample_rate"]), "-ac", "2",
+        cmd_args = {
+            # if .wav is expected, call ffmpeg to convert it to a more universal version of .wav
+            # because the generated wav file is weird and cannot be played with all audio players.
+            ".wav" : ["ffmpeg", "-i", file_name + "_audio.wav", file_name + "w_audio.wav"],
+            # other supported audio format conversions
+            ".flac" : ["ffmpeg", "-i", file_name + "_audio.wav", file_name + "_audio.flac"],
+            ".aiff" : ["ffmpeg", "-i", file_name + "_audio.wav", file_name + "_audio.aiff"],
+            ".m4a" : ["ffmpeg", "-i", file_name + "_audio.wav", "-c:a", "aac", "-b:a", "128k", file_name + "_audio.m4a"],
+                                                            # no video # audio sampling frequency                   # audio channels
+            ".mp3" : ["ffmpeg", "-i", file_name + "_audio.wav", "-vn", "-ar", str(TTS_CONFIG.audio["sample_rate"]), "-ac", "2",
                 # bit rate/second
-                "-b:a", "192k", file_name + "_audio.mp3"], stdout=subprocess.DEVNULL, stdin=subprocess.PIPE, stderr=subprocess.DEVNULL)
-            p.communicate('y'.encode())   # it may ask to override the file
-            p.wait()    # wait for it to finish
+                "-b:a", "192k", file_name + "_audio.mp3"]
+        }
 
-            # old_format = AudioSegment(wav.astype("float32").tobytes(), frame_rate=TTS_CONFIG.audio["sample_rate"], sample_width=8, channels=1)
-            # old_format.export(file_name + "_audio" + expected_output_audio_format, format = expected_output_audio_format[1:])
-
-            # remove the wav file
-            subprocess.run(["rm", file_name + "_audio.wav"])
-
+        if expected_output_audio_format in cmd_args:
+            output_audio_format = expected_output_audio_format
+        # otherwise the extention is not valid, so .mp3 is used as default
+        else:
             output_audio_format = ".mp3"
+
+        p = subprocess.Popen(cmd_args[output_audio_format], stdout=subprocess.DEVNULL, stdin=subprocess.PIPE, stderr=subprocess.DEVNULL)
+        p.communicate('y'.encode()) # it may ask to override the file
+        p.wait()  # wait for it to finish
+
+        # remove the original generated wav file
+        subprocess.run(["rm", file_name + "_audio.wav"])
+
+        if expected_output_audio_format == ".wav":
+            file_name += "w"
 
         if not DEBUG:
             enable_stdout(saved_stdout, null_fd)
