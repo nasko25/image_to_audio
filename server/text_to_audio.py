@@ -178,8 +178,8 @@ class ConvertTextToAudioMozillaTTS:
         wav = self.tts(model, text, TTS_CONFIG, use_cuda, ap, use_gl=False, figures=True)
         print(len(wav.tobytes()))
 
+        # TODO extract to a method
         wavfile.write(file_name + "_audio.wav", TTS_CONFIG.audio["sample_rate"], wav)
-
 
         cmd_args = {
             # if .wav is expected, call ffmpeg to convert it to a more universal version of .wav
