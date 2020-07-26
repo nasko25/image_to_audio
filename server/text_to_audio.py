@@ -123,6 +123,7 @@ class ConvertTextToAudioMozillaTTS:
 
         # load configs
         TTS_CONFIG = load_config(TTS_CONFIG)
+        self.TTS_CONFIG = TTS_CONFIG    # set it as a class variable
         VOCODER_CONFIG = load_config(VOCODER_CONFIG)
 
         # load the audio processor
@@ -178,9 +179,12 @@ class ConvertTextToAudioMozillaTTS:
         wav = self.tts(model, text, TTS_CONFIG, use_cuda, ap, use_gl=False, figures=True)
         print(len(wav.tobytes()))
 
-        # TODO extract to a method
         wavfile.write(file_name + "_audio.wav", TTS_CONFIG.audio["sample_rate"], wav)
 
+        self.convert_audio_to(expected_output_audio_format, file_name)
+
+    # the method expects that there is a (file_name + "_audio.wav") file that is to be converted to (expected_output_audio_format)
+    def convert_audio_to(self, expected_output_audio_format, file_name):
         cmd_args = {
             # if .wav is expected, call ffmpeg to convert it to a more universal version of .wav
             # because the generated wav file is weird and cannot be played with all audio players.
@@ -190,7 +194,7 @@ class ConvertTextToAudioMozillaTTS:
             ".aiff" : ["ffmpeg", "-i", file_name + "_audio.wav", file_name + "_audio.aiff"],
             ".m4a" : ["ffmpeg", "-i", file_name + "_audio.wav", "-c:a", "aac", "-b:a", "128k", file_name + "_audio.m4a"],
                                                             # no video # audio sampling frequency                   # audio channels
-            ".mp3" : ["ffmpeg", "-i", file_name + "_audio.wav", "-vn", "-ar", str(TTS_CONFIG.audio["sample_rate"]), "-ac", "2",
+            ".mp3" : ["ffmpeg", "-i", file_name + "_audio.wav", "-vn", "-ar", str(self.TTS_CONFIG.audio["sample_rate"]), "-ac", "2",
                 # bit rate/second
                 "-b:a", "192k", file_name + "_audio.mp3"]
         }
@@ -239,7 +243,7 @@ class ConvertTextToAudioMozillaTTS:
             try:
                 _, postnet_output, _, _ = run_model_torch(model, inputs, CONFIG, False, self.speaker_id, None)
             except:
-                print("ERROR")
+                print("ERROR:", sys.exc_info())
                 continue
             if self.vocoder_model:
                 # use native vocoder model
@@ -304,12 +308,12 @@ class ConvertTextToAudioMozillaTTS:
 #     ConvertTextToAudioGoogleTTS(text = f.read(), expected_output_audio_format = sys.argv[1], file_name = sys.argv[2].split(".")[0])
 
 # read the text to convert to speech from file
-text = "Hello, I am just checking the audio formats."
+text = "Hello, I am just checking the audio formats.."
 # with open(sys.argv[2], 'r') as f:
 #     ConvertTextToAudioMozillaTTS(text= f.read(), expected_output_audio_format = sys.argv[1], file_name = sys.argv[2].split(".")[0])
 ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".mp3", file_name = "asdf")
-ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".m4a", file_name = "asdf")
-ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".flac", file_name = "asdf")
-ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".aiff", file_name = "asdf")
-ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".wav", file_name = "asdf")
-ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".flacq", file_name = "not_valid_format")
+# ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".m4a", file_name = "asdf")
+# ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".flac", file_name = "asdf")
+# ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".aiff", file_name = "asdf")
+# ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".wav", file_name = "asdf")
+# ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".flacq", file_name = "not_valid_format")
