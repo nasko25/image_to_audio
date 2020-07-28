@@ -59,6 +59,7 @@ from scipy.io import wavfile
 
 DEBUG = True
 
+# if DEBUG mode is not enabled, disable stdout
 if not DEBUG:
     saved_stdout, null_fd = disable_stdout()
 
@@ -110,7 +111,10 @@ class ConvertTextToAudioGoogleTTS:
 # CITATION: https://github.com/mozilla/TTS/blob/72a6ac54c8cfaa407fc64b660248c6a788bdd381/TTS/server/synthesizer.py
 class ConvertTextToAudioMozillaTTS:
     # TODO add comments where needed
+    # initilize the converter
+    # set up the models from the configuration files
     def __init__(self, text, expected_output_audio_format, file_name):
+        # set a pysbd segmenter to be used later to divide the input into segments
         self.seg = pysbd.Segmenter(language="en", clean=True)
         # runtime settings
         use_cuda = False
@@ -123,7 +127,7 @@ class ConvertTextToAudioMozillaTTS:
 
         # load configs
         TTS_CONFIG = load_config(TTS_CONFIG)
-        self.TTS_CONFIG = TTS_CONFIG    # set it as a class variable
+        self.TTS_CONFIG = TTS_CONFIG    # set it as a class variable to be later used by convert_audio_to()
         VOCODER_CONFIG = load_config(VOCODER_CONFIG)
 
         # load the audio processor
@@ -134,6 +138,7 @@ class ConvertTextToAudioMozillaTTS:
         self.speaker_id = None
         self.speakers = []
 
+        # use the imported symbols and phonemes
         global symbols, phonemes
 
         use_phonemes = TTS_CONFIG.use_phonemes
@@ -179,8 +184,10 @@ class ConvertTextToAudioMozillaTTS:
         wav = self.tts(model, text, TTS_CONFIG, use_cuda, ap, use_gl=False, figures=True)
         print(len(wav.tobytes()))
 
+        # save the generated .wav file as (file_name + "_audio.wav")
         wavfile.write(file_name + "_audio.wav", TTS_CONFIG.audio["sample_rate"], wav)
 
+        # convert the generated audio file to the specifed audio format
         self.convert_audio_to(expected_output_audio_format, file_name)
 
     # the method expects that there is a (file_name + "_audio.wav") file that is to be converted to (expected_output_audio_format)
@@ -212,11 +219,14 @@ class ConvertTextToAudioMozillaTTS:
         # remove the original generated wav file
         subprocess.run(["rm", file_name + "_audio.wav"])
 
+        # if the expected_output_audio_format is wav, add "w" to the file_name to differentiate it from the generated wav file
         if expected_output_audio_format == ".wav":
             file_name += "w"
 
+        # enable stdout if DEBUG mode is not set
         if not DEBUG:
             enable_stdout(saved_stdout, null_fd)
+        # print the file name as it is expected by the script that called this file
         print(file_name + "_audio" + output_audio_format, end = "")
 
     # TODO could be better (!. or !!. at the end of sentence breaks the method)
