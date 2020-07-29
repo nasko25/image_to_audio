@@ -233,16 +233,22 @@ class ConvertTextToAudioMozillaTTS:
     def split_into_sentences(self, text):
         return self.seg.segment(text)
 
+    # this is the actual TTS wrapper around Mozilla's library
+    # most of this code is taken from Mozilla TTS's documentation or tutorials
     def tts(self, model, text, CONFIG, use_cuda, ap, use_gl, figures=True):
+        # get the time for benchmarking
         t_1 = time.time()
 
+        # a list of all wavs that will be generated
         wavs = []
+        # split the sentences into individual segments to be processed
         sens = self.split_into_sentences(text)
         print(sens)
         self.speaker_id = id_to_torch(self.speaker_id)
         if self.speaker_id is not None and use_cuda:
             self.speaker_id = self.speaker_id.cuda()
 
+        # for every sentence in the sentences list
         for sen in sens:
             # preprocess the given text
             inputs = text_to_seqvec(sen, CONFIG)
@@ -253,6 +259,10 @@ class ConvertTextToAudioMozillaTTS:
             try:
                 _, postnet_output, _, _ = run_model_torch(model, inputs, CONFIG, False, self.speaker_id, None)
             except:
+                # When a sentence ends with two or more punctuation marks, the segmenter will split the sentence in two parts
+                # For example if the sentence is "Hello?."  The segmenter will generate the following list:
+                # ["Hello?", "."]
+                # Since "." is not a sentence, the run_model_torch() breaks
                 print("ERROR:", sys.exc_info())
                 continue
             if self.vocoder_model:
@@ -290,24 +300,24 @@ class ConvertTextToAudioMozillaTTS:
         print(f" > Real-time factor: {process_time / audio_time}")
         return wavs
 
-        waveform, alignment, mel_spec, mel_postnet_spec, stop_tokens, inputs = synthesis(model, text, CONFIG, use_cuda, ap, self.speaker_id, style_wav=None,
-                                                                                truncated=False, enable_eos_bos_chars=CONFIG.enable_eos_bos_chars, use_griffin_lim=True)
-        # mel_postnet_spec = ap._denormalize(mel_postnet_spec.T)
-        if not use_gl:
-            waveform = self.vocoder_model.inference(torch.FloatTensor(mel_postnet_spec.T).unsqueeze(0))
-            waveform = waveform.flatten()
-        if use_cuda:
-            waveform = waveform.cpu()
-        waveform = waveform.numpy()
-        rtf = (time.time() - t_1) / (len(waveform) / ap.sample_rate)
-        tps = (time.time() - t_1) / len(waveform)
+        # waveform, alignment, mel_spec, mel_postnet_spec, stop_tokens, inputs = synthesis(model, text, CONFIG, use_cuda, ap, self.speaker_id, style_wav=None,
+        #                                                                         truncated=False, enable_eos_bos_chars=CONFIG.enable_eos_bos_chars, use_griffin_lim=True)
+        # # mel_postnet_spec = ap._denormalize(mel_postnet_spec.T)
+        # if not use_gl:
+        #     waveform = self.vocoder_model.inference(torch.FloatTensor(mel_postnet_spec.T).unsqueeze(0))
+        #     waveform = waveform.flatten()
+        # if use_cuda:
+        #     waveform = waveform.cpu()
+        # waveform = waveform.numpy()
+        # rtf = (time.time() - t_1) / (len(waveform) / ap.sample_rate)
+        # tps = (time.time() - t_1) / len(waveform)
 
-        print(waveform.shape)
-        print(" > Run-time: {}".format(time.time() - t_1))
-        print(" > Real-time factor: {}".format(rtf))
-        print(" > Time per step: {}".format(tps))
+        # print(waveform.shape)
+        # print(" > Run-time: {}".format(time.time() - t_1))
+        # print(" > Real-time factor: {}".format(rtf))
+        # print(" > Time per step: {}".format(tps))
 
-        return alignment, mel_postnet_spec, stop_tokens, waveform
+        # return alignment, mel_postnet_spec, stop_tokens, waveform
 
 # ctta_test = ConvertTextToAudioGoogleTTS(text = "Hello || This is |||| a test ... 1234!.", expected_output_audio_format = ".flac", file_name = "cccc")
 # ConvertTextToAudioGoogleTTS(text = "get from a file", expected_output_audio_format = "at the beginning of the file", file_name = "at the beginning of the file")
