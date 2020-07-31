@@ -105,14 +105,6 @@ function dropHandler(ev) {
     xhr.responseType = 'blob';
     xhr.send(formData);
   }
-	// TODO older browsers?
-	// else {
-  //   // Use DataTransfer interface to access the file(s)
-  //   for (var i = 0; i < ev.dataTransfer.files.length; i++) {
-  //     console.log('... file[' + i + '] - ' + ev.dataTransfer.files[i].name + ' uploaded.');
-	//   	XMLHttpRequest.send(ev.dataTransfer.files[i]);
-  //   }
-  // }
 }
 // https://www.w3schools.com/php/php_file_upload.asp
 function dragOverHandler(ev) {
