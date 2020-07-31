@@ -472,7 +472,7 @@ input:checked + .slider:before {
 	font-weight: 500;
 }
 
-// loader
+/* loader */
 .lds-ring {
   display: inline-block;
   position: relative;
