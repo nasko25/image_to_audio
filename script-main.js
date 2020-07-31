@@ -153,3 +153,21 @@ function getCookie(cname) {
   }
   return "";
 }
+
+// adds the file count when selecting files using the "Choose file(s)" button
+function addFileCount() {
+  console.log(document.getElementById("fileToUpload").files);
+  var fileCount = document.getElementById("fileToUpload").files.length;
+  var counter = document.getElementById("fileCount");
+	if (typeof fileCount === "number" && !Number.isNaN(fileCount)) {
+    counter.innerText = fileCount;
+  }
+  else {
+    counter.innerText = 0;
+  }
+
+  counter.style.display = "inline";
+
+}
+
+document.getElementById("fileToUpload").onchange = addFileCount;

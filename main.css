@@ -151,6 +151,13 @@ nav {
 	margin-top:0.4em;
 }
 
+#fileCount {
+	display: none;	  /* display will be set after a user adds a file for uploading */
+	position: absolute;
+	right: 1em;
+	font-size: 0.6em;
+}
+
 @media (max-width: 750px) {
 	.box {
 		width: 450px;

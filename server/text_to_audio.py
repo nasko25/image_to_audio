@@ -110,7 +110,6 @@ class ConvertTextToAudioGoogleTTS:
 
 # CITATION: https://github.com/mozilla/TTS/blob/72a6ac54c8cfaa407fc64b660248c6a788bdd381/TTS/server/synthesizer.py
 class ConvertTextToAudioMozillaTTS:
-    # TODO add comments where needed
     # initilize the converter
     # set up the models from the configuration files
     def __init__(self, text, expected_output_audio_format, file_name):
