@@ -57,7 +57,7 @@ from TTS.vocoder.utils.generic_utils import setup_generator
 
 from scipy.io import wavfile
 
-DEBUG = True
+DEBUG = False
 
 # if DEBUG mode is not enabled, disable stdout
 if not DEBUG:
@@ -328,9 +328,9 @@ class ConvertTextToAudioMozillaTTS:
 
 # read the text to convert to speech from file
 text = "Hello, I am just checking the audio formats.."
-# with open(sys.argv[2], 'r') as f:
-#     ConvertTextToAudioMozillaTTS(text= f.read(), expected_output_audio_format = sys.argv[1], file_name = sys.argv[2].split(".")[0])
-ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".mp3", file_name = "asdf")
+with open(sys.argv[2], 'r') as f:
+    ConvertTextToAudioMozillaTTS(text= f.read(), expected_output_audio_format = sys.argv[1], file_name = sys.argv[2].split(".")[0])
+# ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".mp3", file_name = "asdf")
 # ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".m4a", file_name = "asdf")
 # ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".flac", file_name = "asdf")
 # ConvertTextToAudioMozillaTTS(text=text, expected_output_audio_format = ".aiff", file_name = "asdf")
